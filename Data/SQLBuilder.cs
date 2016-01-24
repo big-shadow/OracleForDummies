@@ -3,6 +3,9 @@ using System.Text;
 
 namespace OFD.Data
 {
+    /// <summary>
+    /// This class builds both DDL and DML statements in the PL-SQL programming language using common conventions. 
+    /// </summary>
     public class SQLBuilder
     {
         public SQLBuilder()

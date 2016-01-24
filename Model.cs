@@ -2,6 +2,9 @@
 
 namespace OFD
 {
+    /// <summary>
+    /// This class is to be inherited for simple Oracle persistance provided by the OracleForDummies library. 
+    /// </summary>
     public abstract class Model
     {
         public int ID { get; set; }

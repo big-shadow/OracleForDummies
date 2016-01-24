@@ -4,6 +4,9 @@ using System;
 
 namespace OFD
 {
+    /// <summary>
+    /// This class converts an object instances' class name and properties into meaningful Oracle parameters and tokens.
+    /// </summary>
     public static class Reflector
     {
         public static string GetClassName(ref object instance)
