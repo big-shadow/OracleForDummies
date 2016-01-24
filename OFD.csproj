@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B41E3038-551C-4996-8CE7-C2D499491B97}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OFD</RootNamespace>
+    <AssemblyName>OFD</AssemblyName>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>..\assemblies\ODAC121024Xcopy_32bit\odp.net4\odp.net\managed\common\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="OraProvCfg">
+      <HintPath>..\assemblies\ODAC121024Xcopy_32bit\odp.net4\odp.net\managed\x86\OraProvCfg.exe</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccessDTC">
+      <HintPath>..\assemblies\ODAC121024Xcopy_32bit\odp.net4\odp.net\managed\x86\Oracle.ManagedDataAccessDTC.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccessIOP">
+      <HintPath>..\assemblies\ODAC121024Xcopy_32bit\odp.net4\odp.net\managed\x86\Oracle.ManagedDataAccessIOP.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Model.cs" />
+    <Compile Include="Reflector\Reflector.cs" />
+    <Compile Include="Data\SQLBuilder.cs" />
+    <Compile Include="Data\Transactor.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Reflector\" />
+    <Folder Include="Data\" />
+  </ItemGroup>
+</Project>
