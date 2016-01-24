@@ -8,15 +8,17 @@ namespace OFD
     public abstract class Model
     {
         public int ID { get; set; }
+        public string Name { get; set; }
 
         public Model(int id = -1)
         {
             this.ID = id;
+            this.Name = "Big Ray";
         }
 
         public virtual void Save()
         {
-            Transactor.Execute("select 1 as MYFIELD from dual");
+            Transactor.Persist(this);
         }
 
     }

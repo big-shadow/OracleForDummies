@@ -3,6 +3,9 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace OFD.Data
 {
+    /// <summary>
+    /// This class exists only to persist and retreive model records. It serves as a buffer and depends on Reflector, Sniffer, and SQLBuilder.
+    /// </summary>
     public static class Transactor
     {
         private static OracleConnection GetConnection()
@@ -30,14 +33,35 @@ namespace OFD.Data
             }
         }
 
-        private static void CloseConnection(ref OracleConnection con)
+        public static bool Execute(string sql)
         {
-            con.Close();
-            con.Dispose();
+            bool result = true;
+
+            try
+            {
+                using (OracleConnection con = GetConnection())
+                {
+                    using (OracleCommand command = new OracleCommand(sql, con))
+                    {
+                        command.ExecuteReader();
+                    }
+
+                    con.Close();
+                }
+            }
+            finally
+            {
+                result = false;
+            }
+
+            return result;
         }
 
-        public static void Execute(string sql)
+        private static int GetLastUpdatedId(string tablename)
         {
+            string sql = "SELECT ID FROM " + tablename + "WHERE ROWNUM <=1 ORDER BY TIME_UPDATED ASC;";
+            int val = -1;
+
             using (OracleConnection con = GetConnection())
             {
                 using (OracleCommand command = new OracleCommand(sql, con))
@@ -48,24 +72,59 @@ namespace OFD.Data
                         {
                             while (reader.Read())
                             {
-                                object myField = reader["MYFIELD"];
-                                Console.WriteLine(myField);
+                                Int32.TryParse((string)reader["ID"], out val);
                             }
                         }
-                        finally
+                        catch
                         {
-                            // always call Close when done reading.
+                            val = -1;
                             reader.Close();
                         }
                     }
                 }
+
+                con.Close();
             }
+
+            return val;
         }
 
-        public static bool TableExists(string name)
+        public static int Persist(object instance)
         {
+            string table = Reflector.GetClassName(ref instance);
+            string sql = string.Empty;
 
-            return true;
+            // Prepare a create table statement if the table doesn't exist. Then make a trigger to write to it after updates.
+            if (!Sniffer.TableExists(table, GetConnection()))
+            {
+                Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.ResolveColumns(ref instance)));
+                Execute(Reflector.GetEmbeddedResource("UpdateTrigger.txt").Replace(TokenEnum.TABLE.ToString(), table));
+            }
+
+            // If the table exists or was created sucessfully, check to see if it has already been saved once before.
+            if (Sniffer.TableExists(table, GetConnection()))
+            {
+                // If it's been saved once update the record, otherwise insert a new one.
+                if(Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
+                {
+                    // TODO: Update statement.
+                }
+                else
+                {
+                    sql = SQLBuilder.GetInsertStatement(table, Reflector.ResolveInsertMappings(ref instance));
+                }              
+            }
+
+            // Once updated or inserted, check if it was inserted. If yes, set the ID property.
+            if (Execute(sql))
+            {
+                if(Reflector.GetID(ref instance) < 0)
+                {
+                    Reflector.SetID(ref instance, GetLastUpdatedId(table));
+                }
+            }
+
+            return 1;
         }
     }
 }

@@ -10,20 +10,30 @@ namespace OFD.Data
     {
         public SQLBuilder()
         {
-            
+
         }
 
         public static string GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
         {
-            char delimiter = ' ';
+            string delimiter = "";
             StringBuilder statement = new StringBuilder("CREATE TABLE " + tablename + " (");
 
-            foreach(KeyValuePair<string, string> column in columns)
+            foreach (KeyValuePair<string, string> column in columns)
             {
-                statement.AppendLine(delimiter + ' ' + column.Key + ' ' + column.Value);
-                delimiter = ',';
+                if (column.Equals("id"))
+                {
+                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY");
+                }
+                else
+                {
+                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value);
+                }
+
+                delimiter = ", ";
             }
 
+            statement.AppendLine(", TIME_INSERTED DATE DEFAULT SYSDATE NOT NULL");
+            statement.AppendLine(", TIME_UPDATED DATE DEFAULT SYSDATE NOT NULL");
             statement.AppendLine(")");
 
             return statement.ToString();
@@ -38,6 +48,12 @@ namespace OFD.Data
 
             foreach (KeyValuePair<string, string> column in colval)
             {
+                // Skip the ID because it's auto-incrementing.
+                if (column.Equals("id"))
+                {
+                    continue;
+                }
+
                 statement.Append(delimiter + column.Key);
                 values.Append(delimiter + column.Value);
 
