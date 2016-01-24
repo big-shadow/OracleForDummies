@@ -57,8 +57,16 @@ namespace OFD.Data
 
             foreach (var p in GetWritableProperties(ref instance))
             {
-                string val = instance.GetType().GetProperty(p.Name).GetValue(instance, null).ToString();
-                dic.Add(p.Name.ToLowerInvariant(), val);
+                object val = p.GetValue(instance, null);     
+                
+                if(p.PropertyType.Equals(typeof(String)))
+                {
+                    dic.Add(p.Name.ToLowerInvariant(), "'" + val.ToString() + "'");
+                }
+                else
+                {
+                    dic.Add(p.Name.ToLowerInvariant(), val.ToString());
+                }
             }
 
             return dic;
@@ -74,11 +82,11 @@ namespace OFD.Data
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.Data." + name));
+                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.Data.Scripts." + name));
 
                 return reader.ReadToEnd();
             }
-            catch
+            catch(Exception ex)
             {
                 return null;
             }

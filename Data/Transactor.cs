@@ -43,13 +43,13 @@ namespace OFD.Data
                 {
                     using (OracleCommand command = new OracleCommand(sql, con))
                     {
-                        command.ExecuteReader();
+                        command.ExecuteNonQuery();
                     }
 
                     con.Close();
                 }
             }
-            finally
+            catch
             {
                 result = false;
             }
@@ -59,7 +59,7 @@ namespace OFD.Data
 
         private static int GetLastUpdatedId(string tablename)
         {
-            string sql = "SELECT ID FROM " + tablename + "WHERE ROWNUM <=1 ORDER BY TIME_UPDATED ASC;";
+            string sql = "SELECT ID FROM " + tablename + " WHERE ROWNUM <=1 ORDER BY TIME_UPDATED ASC";
             int val = -1;
 
             using (OracleConnection con = GetConnection())
@@ -72,12 +72,11 @@ namespace OFD.Data
                         {
                             while (reader.Read())
                             {
-                                Int32.TryParse((string)reader["ID"], out val);
+                                Int32.TryParse((string)reader["id"], out val);
                             }
                         }
-                        catch
+                        catch(Exception ex)
                         {
-                            val = -1;
                             reader.Close();
                         }
                     }
@@ -97,7 +96,10 @@ namespace OFD.Data
             // Prepare a create table statement if the table doesn't exist. Then make a trigger to write to it after updates.
             if (!Sniffer.TableExists(table, GetConnection()))
             {
-                Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.ResolveColumns(ref instance)));
+                if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.ResolveColumns(ref instance))))
+                {
+
+                }
                 Execute(Reflector.GetEmbeddedResource("UpdateTrigger.txt").Replace(TokenEnum.TABLE.ToString(), table));
             }
 

@@ -2,9 +2,6 @@
 \\VBOXSVR\Source\OFD\OracleForDummies\OFD\bin\Debug\OFD.dll
 \\VBOXSVR\Source\OFD\OracleForDummies\OFD\bin\Debug\OFD.pdb
 \\VBOXSVR\Source\OFD\OracleForDummies\OFD\bin\Debug\Oracle.ManagedDataAccess.dll
-\\VBOXSVR\Source\OFD\OracleForDummies\OFD\bin\Debug\Oracle.ManagedDataAccessDTC.dll
-\\VBOXSVR\Source\OFD\OracleForDummies\OFD\bin\Debug\Oracle.ManagedDataAccessIOP.dll
-\\VBOXSVR\Source\OFD\OracleForDummies\OFD\bin\Debug\OraProvCfg.exe
 \\VBOXSVR\Source\OFD\OracleForDummies\OFD\obj\Debug\OFD.csprojResolveAssemblyReference.cache
 \\VBOXSVR\Source\OFD\OracleForDummies\OFD\obj\Debug\OFD.dll
 \\VBOXSVR\Source\OFD\OracleForDummies\OFD\obj\Debug\OFD.pdb
