@@ -12,9 +12,9 @@ namespace OFD
         }
 
         public virtual void Save()
-        {          
-            Transactor.Execute("select 1 as MYFIELD from dual");    
+        {
+            Transactor.Execute("select 1 as MYFIELD from dual");
         }
-           
+
     }
 }
