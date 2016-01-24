@@ -1,8 +1,9 @@
 ﻿using System.Reflection;
 using System.Collections.Generic;
 using System;
+using System.IO;
 
-namespace OFD
+namespace OFD.Data
 {
     /// <summary>
     /// This class converts an object instances' class name and properties into meaningful Oracle parameters and tokens.
@@ -14,7 +15,7 @@ namespace OFD
             return instance.GetType().Name.ToLowerInvariant();
         }
 
-        private static Dictionary<string, string> ResolveColumns(ref object instance)
+        public static Dictionary<string, string> ResolveColumns(ref object instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -38,6 +39,21 @@ namespace OFD
         { 
 
             return"";
+        }
+
+        public static string GetEmbeddedResource(string name)
+        {
+            try
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.Data." + name));
+
+                return reader.ReadToEnd();
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

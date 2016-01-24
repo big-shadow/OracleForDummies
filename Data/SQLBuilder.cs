@@ -13,7 +13,7 @@ namespace OFD.Data
             
         }
 
-        public StringBuilder GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
+        public static string GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
         {
             char delimiter = ' ';
             StringBuilder statement = new StringBuilder("CREATE TABLE " + tablename + " (");
@@ -26,7 +26,27 @@ namespace OFD.Data
 
             statement.AppendLine(")");
 
-            return statement;
+            return statement.ToString();
+        }
+
+        public static string GetInsertStatement(string tablename, Dictionary<string, string> colval)
+        {
+            string delimiter = string.Empty;
+
+            StringBuilder statement = new StringBuilder("INSERT INTO " + tablename + " (");
+            StringBuilder values = new StringBuilder(") VALUES (");
+
+            foreach (KeyValuePair<string, string> column in colval)
+            {
+                statement.Append(delimiter + column.Key);
+                values.Append(delimiter + column.Value);
+
+                delimiter = ", ";
+            }
+
+            values.Append(")");
+
+            return statement.ToString() + values.ToString();
         }
     }
 }
