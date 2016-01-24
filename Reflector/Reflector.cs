@@ -52,7 +52,7 @@ namespace OFD.Data
             return dic;
         }
 
-        public static Dictionary<string, string> ResolveInsertMappings(ref object instance)
+        public static Dictionary<string, string> ResolvePersistenceMappings(ref object instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 

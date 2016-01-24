@@ -8,12 +8,15 @@ namespace OFD
     public abstract class Model
     {
         public int ID { get; set; }
-        public string Name { get; set; }
 
-        protected Model(int id = -1)
+        protected Model(int id)
         {
             this.ID = id;
-            this.Name = "Big Ray";
+
+            if(this.ID > 0)
+            {
+                // TODO: Query for this record and assign it's properties. 
+            }
         }
 
         public virtual void Save()

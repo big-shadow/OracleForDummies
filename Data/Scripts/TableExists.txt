@@ -1,7 +1,0 @@
-﻿DECLARE
-  refcurs SYS_REFCURSOR;
-BEGIN
-  OPEN refcurs FOR 
-  SELECT COUNT(*) AS numrows FROM --table--;
-  DBMS_SQL.RETURN_RESULT(refcurs);
-END;

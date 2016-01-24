@@ -119,19 +119,20 @@ namespace OFD.Data
                 if(Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
                 {
                     // TODO: Update statement.
+                    sql = SQLBuilder.GetUpdateStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
                 }
                 else
                 {
-                    sql = SQLBuilder.GetInsertStatement(table, Reflector.ResolveInsertMappings(ref instance));
+                    sql = SQLBuilder.GetInsertStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
                 }              
             }
 
-            // Once updated or inserted, check if it was inserted. If yes, set the ID property.
+            // Once updated or inserted, check the ID property and then set it accordingly.
             try
             {
                 if (Execute(sql))
                 {
-                    if (Reflector.GetID(ref instance) < 0)
+                    if (Reflector.GetID(ref instance) == 0)
                     {
                         Reflector.SetID(ref instance, GetLastUpdatedId(table));
                     }
