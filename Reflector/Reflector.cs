@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.IO;
+using OFD.Properties;
 
 namespace OFD.Data
 {
@@ -45,7 +46,7 @@ namespace OFD.Data
 
             foreach (var p in propertyInfos)
             {
-                dic.Add(p.Name.ToLowerInvariant(), GetOracleType(p.PropertyType));
+                dic.Add(p.Name.ToLowerInvariant(), TypeMap[p.PropertyType]);
             }
 
             return dic;
@@ -72,11 +73,6 @@ namespace OFD.Data
             return dic;
         }
 
-        private static string GetOracleType(Type type)
-        {
-            return TypeMap[type];
-        }
-
         public static string GetEmbeddedResource(string name)
         {
             try
@@ -88,7 +84,7 @@ namespace OFD.Data
             }
             catch(Exception ex)
             {
-                return null;
+                throw new Exception(string.Format(Resources.NoResource, name), ex);
             }
         }
 

@@ -79,6 +79,15 @@ namespace OFD.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to get the {0} embedded resource..
+        /// </summary>
+        internal static string NoResource {
+            get {
+                return ResourceManager.GetString("NoResource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Falied to create the {0} table..
         /// </summary>
         internal static string NoTable {

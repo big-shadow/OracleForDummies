@@ -12,3 +12,5 @@ F:\OFD\OracleForDummies\OFD\bin\Debug\Oracle.ManagedDataAccess.dll
 F:\OFD\OracleForDummies\OFD\obj\Debug\OFD.csprojResolveAssemblyReference.cache
 F:\OFD\OracleForDummies\OFD\obj\Debug\OFD.dll
 F:\OFD\OracleForDummies\OFD\obj\Debug\OFD.pdb
+\\VBOXSVR\Source\OFD\OracleForDummies\OFD\obj\Debug\OFD.Properties.Resources.resources
+\\VBOXSVR\Source\OFD\OracleForDummies\OFD\obj\Debug\OFD.csproj.GenerateResource.Cache

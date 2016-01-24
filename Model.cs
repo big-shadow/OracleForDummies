@@ -10,7 +10,7 @@ namespace OFD
         public int ID { get; set; }
         public string Name { get; set; }
 
-        public Model(int id = -1)
+        protected Model(int id = -1)
         {
             this.ID = id;
             this.Name = "Big Ray";
