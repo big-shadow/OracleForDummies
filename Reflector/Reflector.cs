@@ -82,7 +82,7 @@ namespace OFD.Data
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.Data.Scripts." + name));
+                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.Data.Scripts." + name + ".txt"));
 
                 return reader.ReadToEnd();
             }

@@ -20,6 +20,5 @@ namespace OFD
         {
             Transactor.Persist(this);
         }
-
     }
 }

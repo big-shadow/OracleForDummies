@@ -1,5 +1,6 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
+using OFD.Properties;
 
 namespace OFD.Data
 {
@@ -49,9 +50,9 @@ namespace OFD.Data
                     con.Close();
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                result = false;
+                throw new Exception(sql.Substring(0, 50), ex);
             }
 
             return result;
@@ -59,7 +60,7 @@ namespace OFD.Data
 
         private static int GetLastUpdatedId(string tablename)
         {
-            string sql = "SELECT ID FROM " + tablename + " WHERE ROWNUM <=1 ORDER BY TIME_UPDATED ASC";
+            string sql = "SELECT ID FROM " + tablename + " WHERE ROWNUM <= 1 ORDER BY time_updated DESC";
             int val = -1;
 
             using (OracleConnection con = GetConnection())
@@ -70,14 +71,15 @@ namespace OFD.Data
                     {
                         try
                         {
-                            while (reader.Read())
+                            if (reader.Read())
                             {
-                                Int32.TryParse((string)reader["id"], out val);
+                                Int32.TryParse(reader["ID"].ToString(), out val);
                             }
                         }
                         catch(Exception ex)
                         {
                             reader.Close();
+                            throw new Exception(string.Format(Resources.NoID, tablename), ex);
                         }
                     }
                 }
@@ -88,7 +90,7 @@ namespace OFD.Data
             return val;
         }
 
-        public static int Persist(object instance)
+        public static void Persist(object instance)
         {
             string table = Reflector.GetClassName(ref instance);
             string sql = string.Empty;
@@ -96,11 +98,18 @@ namespace OFD.Data
             // Prepare a create table statement if the table doesn't exist. Then make a trigger to write to it after updates.
             if (!Sniffer.TableExists(table, GetConnection()))
             {
-                if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.ResolveColumns(ref instance))))
+                try
                 {
-
+                    if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.ResolveColumns(ref instance))))
+                    {
+                        Execute(Reflector.GetEmbeddedResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
+                    }
                 }
-                Execute(Reflector.GetEmbeddedResource("UpdateTrigger.txt").Replace(TokenEnum.TABLE.ToString(), table));
+                catch(Exception ex)
+                {
+                    throw new Exception(string.Format(Resources.NoTable, table), ex);
+                }
+
             }
 
             // If the table exists or was created sucessfully, check to see if it has already been saved once before.
@@ -118,15 +127,21 @@ namespace OFD.Data
             }
 
             // Once updated or inserted, check if it was inserted. If yes, set the ID property.
-            if (Execute(sql))
+            try
             {
-                if(Reflector.GetID(ref instance) < 0)
+                if (Execute(sql))
                 {
-                    Reflector.SetID(ref instance, GetLastUpdatedId(table));
+                    if (Reflector.GetID(ref instance) < 0)
+                    {
+                        Reflector.SetID(ref instance, GetLastUpdatedId(table));
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format(Resources.NoInsert, table), ex);
+            }
 
-            return 1;
         }
     }
 }

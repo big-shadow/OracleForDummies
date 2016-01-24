@@ -2,5 +2,5 @@
   BEFORE UPDATE ON --table--
   FOR EACH ROW
 BEGIN
-  :new.TIME_UPDATED := sysdate;
+  :new.time_updated := sysdate;
 END;
