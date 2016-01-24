@@ -1,6 +1,5 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
-using System.Text;
 
 namespace OFD.Data
 {
@@ -11,17 +10,25 @@ namespace OFD.Data
             try
             {
                 
-                var con = new OracleConnection(); 
+                var con = new OracleConnection();
 
-                con.ConnectionString = @"ORCL =
+                con.ConnectionString = @"Data Source =
                   (DESCRIPTION =
                     (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
                     (CONNECT_DATA =
                       (SERVER = DEDICATED)
                       (SERVICE_NAME = orcl)
                     )
-                  )"; 
+                  ); User Id = system; Password = 2016;";
 
+                //                con.ConnectionString = @"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)));
+                //User Id = system; Password = 1234;";
+
+                //con.ConnectionString = @"Data Source = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))(CONNECT_DATA = (SERVICE_NAME = orcl)));
+                //uid = system; pwd = 1234;";
+
+                //SERVER = (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = MyHost)(PORT = MyPort))(CONNECT_DATA = (SERVICE_NAME = MyOracleSID)));
+                //uid = myUsername; pwd = myPassword;
 
                 con.Open(); 
                 return con;
@@ -43,28 +50,26 @@ namespace OFD.Data
         {
             using (OracleConnection con = GetConnection())
             {
-                OracleCommand command = new OracleCommand(sql, con);
-
-                OracleDataReader reader = command.ExecuteReader();
-                try
+                using (OracleCommand command = new OracleCommand(sql, con))
                 {
-                    while (reader.Read())
+                    using (OracleDataReader reader = command.ExecuteReader())
                     {
-                        
+                        try
+                        {
+                            while (reader.Read())
+                            {
+                                string myField = (string)reader["MYFIELD"];
+                                Console.WriteLine(myField);
+                            }
+                        }
+                        finally
+                        {
+                            // always call Close when done reading.
+                            reader.Close();
+                        }
                     }
                 }
-                finally
-                {
-                    // always call Close when done reading.
-                    reader.Close();
-                }
-
-
-
             }
-
-
-
         }
     }
 }

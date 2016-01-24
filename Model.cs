@@ -1,5 +1,4 @@
-﻿using System;
-using OFD.Data;
+﻿using OFD.Data;
 
 namespace OFD
 {
@@ -9,12 +8,12 @@ namespace OFD
 
         public Model(int id = -1)
         {
-
+            this.ID = id;
         }
 
         public virtual void Save()
         {          
-            Transactor.Execute("select 1 from dual");    
+            Transactor.Execute("select 1 as MYFIELD from dual");    
         }
            
     }
