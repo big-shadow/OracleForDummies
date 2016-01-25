@@ -1,0 +1,6 @@
+﻿METHODS IN MODEL:
+AddManyToMany
+AddOneToMany
+AddManyToOne
+GetWhereId - DONE
+GetWhereRelatedTo

@@ -3,11 +3,6 @@
 
 bin/
 obj/
-Properties/
-TODO.txt
-*.config
-*.csproj
-
 
 # User-specific files
 *.suo
