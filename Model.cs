@@ -5,23 +5,31 @@ namespace OFD
     /// <summary>
     /// This class is to be inherited for simple Oracle persistance provided by the OracleForDummies library. 
     /// </summary>
-    public abstract class Model
+    public class Model
     {
         public int ID { get; set; }
 
-        protected Model(int id)
+        public Model(int id = 0)
         {
-            this.ID = id;
-
-            if(this.ID > 0)
+            if(id > 0)
             {
-                // TODO: Query for this record and assign it's properties. 
+                GetWhereID(id);
             }
         }
 
         public virtual void Save()
         {
             Transactor.Persist(this);
+        }
+
+        public virtual void GetWhereID(int id)
+        {      
+            Transactor.GetWhereID(this, id);
+        }
+
+        public static T GetWhereID<T>(int id) where T : new()
+        {
+            return Transactor.GetWhereID<T>(typeof(T), id);
         }
     }
 }

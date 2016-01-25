@@ -61,6 +61,24 @@ namespace OFD.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to connect using the {0} connection string..
+        /// </summary>
+        internal static string NoConnection {
+            get {
+                return ResourceManager.GetString("NoConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to fetch {0} where ID = {1}..
+        /// </summary>
+        internal static string NoFetchWhereID {
+            get {
+                return ResourceManager.GetString("NoFetchWhereID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to get the last updated {0} ID..
         /// </summary>
         internal static string NoID {
@@ -84,6 +102,15 @@ namespace OFD.Properties {
         internal static string NoResource {
             get {
                 return ResourceManager.GetString("NoResource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to sniff the {0} table..
+        /// </summary>
+        internal static string NoSniff {
+            get {
+                return ResourceManager.GetString("NoSniff", resourceCulture);
             }
         }
         

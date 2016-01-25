@@ -1,5 +1,6 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
+using OFD.Properties;
 
 namespace OFD.Data
 {
@@ -33,9 +34,9 @@ namespace OFD.Data
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Do nothing. It's too soon to dispose.
+                    throw new Exception(string.Format(Resources.NoSniff, name), ex);
                 }
             }
 
@@ -75,9 +76,9 @@ namespace OFD.Data
                         }
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
-                    // Do nothing. It's too soon to dispose.
+                    throw new Exception(string.Format(Resources.NoSniff, name), ex);
                 }
             }
 

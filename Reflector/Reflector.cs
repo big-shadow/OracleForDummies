@@ -18,9 +18,9 @@ namespace OFD.Data
                 Dictionary<Type, string> map = new Dictionary<Type, string>();
                 map.Add(typeof(bool), "NUMBER(1)");
                 map.Add(typeof(string), "VARCHAR2(4000)");
-                map.Add(typeof(short), "NUMBER(8)");
-                map.Add(typeof(int), "NUMBER(16)");
-                map.Add(typeof(long), "NUMBER(32)");
+                map.Add(typeof(short), "NUMBER(5)");
+                map.Add(typeof(int), "NUMBER(10)");
+                map.Add(typeof(long), "NUMBER(19)");
                 map.Add(typeof(DateTime), "DATE");
 
                 return map;
@@ -58,9 +58,9 @@ namespace OFD.Data
 
             foreach (var p in GetWritableProperties(ref instance))
             {
-                object val = p.GetValue(instance, null);     
-                
-                if(p.PropertyType.Equals(typeof(String)))
+                object val = p.GetValue(instance, null);
+
+                if (p.PropertyType.Equals(typeof(String)))
                 {
                     dic.Add(p.Name.ToLowerInvariant(), "'" + val.ToString() + "'");
                 }
@@ -82,13 +82,13 @@ namespace OFD.Data
 
                 return reader.ReadToEnd();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(string.Format(Resources.NoResource, name), ex);
             }
         }
 
-        private static List<PropertyInfo> GetWritableProperties(ref object instance)
+        public static List<PropertyInfo> GetWritableProperties(ref object instance)
         {
             List<PropertyInfo> writable = new List<PropertyInfo>();
 
@@ -116,10 +116,18 @@ namespace OFD.Data
             return (int)instance.GetType().GetProperty("ID").GetValue(instance, null);
         }
 
-        public static void SetID(ref object instance, int id)
+        public static void SetProperty(ref object instance, string name, object value)
         {
-            var property = instance.GetType().GetProperty("ID");
-            property.SetValue(instance, id, null);
+            var property = instance.GetType().GetProperty(name);
+
+            if (value.GetType().Equals(typeof(long)))
+            {
+                property.SetValue(instance, unchecked((int)(long)value), null);
+            }
+            else
+            {
+                property.SetValue(instance, value, null);
+            }
         }
     }
 }

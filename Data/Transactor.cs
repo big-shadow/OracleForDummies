@@ -11,11 +11,7 @@ namespace OFD.Data
     {
         private static OracleConnection GetConnection()
         {
-            try
-            {
-                var con = new OracleConnection();
-
-                con.ConnectionString = @"Data Source =
+            string connectionString = @"Data Source =
                   (DESCRIPTION =
                     (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))
                     (CONNECT_DATA =
@@ -24,17 +20,21 @@ namespace OFD.Data
                     )
                   ); User Id = system; Password = 2016;";
 
-
+            try
+            {
+                var con = new OracleConnection();
+                con.ConnectionString = connectionString;
                 con.Open();
+
                 return con;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                throw new Exception(string.Format(Resources.NoConnection, connectionString), ex);
             }
         }
 
-        public static bool Execute(string sql)
+        private static bool Execute(string sql)
         {
             bool result = true;
 
@@ -50,7 +50,7 @@ namespace OFD.Data
                     con.Close();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(sql.Substring(0, 50), ex);
             }
@@ -76,7 +76,7 @@ namespace OFD.Data
                                 Int32.TryParse(reader["ID"].ToString(), out val);
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             reader.Close();
                             throw new Exception(string.Format(Resources.NoID, tablename), ex);
@@ -105,7 +105,7 @@ namespace OFD.Data
                         Execute(Reflector.GetEmbeddedResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception(string.Format(Resources.NoTable, table), ex);
                 }
@@ -116,7 +116,7 @@ namespace OFD.Data
             if (Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved once update the record, otherwise insert a new one.
-                if(Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
+                if (Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
                 {
                     // TODO: Update statement.
                     sql = SQLBuilder.GetUpdateStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
@@ -124,7 +124,7 @@ namespace OFD.Data
                 else
                 {
                     sql = SQLBuilder.GetInsertStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
-                }              
+                }
             }
 
             // Once updated or inserted, check the ID property and then set it accordingly.
@@ -134,7 +134,7 @@ namespace OFD.Data
                 {
                     if (Reflector.GetID(ref instance) == 0)
                     {
-                        Reflector.SetID(ref instance, GetLastUpdatedId(table));
+                        Reflector.SetProperty(ref instance, "ID", GetLastUpdatedId(table));
                     }
                 }
             }
@@ -143,6 +143,38 @@ namespace OFD.Data
                 throw new Exception(string.Format(Resources.NoInsert, table), ex);
             }
 
+        }
+
+        public static void GetWhereID(object instance, int id)
+        {
+            string table = Reflector.GetClassName(ref instance);
+            string sql = "SELECT * FROM " + table + " WHERE ID = " + id;
+
+            try
+            {
+                using (OracleConnection con = GetConnection())
+                {
+                    using (OracleCommand command = new OracleCommand(sql, con))
+                    {
+                        using (OracleDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                foreach (var p in Reflector.GetWritableProperties(ref instance))
+                                {
+                                    Reflector.SetProperty(ref instance, p.Name, reader[p.Name.ToUpperInvariant()]);
+                                }
+                            }
+                        }
+                    }
+
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format(Resources.NoFetchWhereID, table, id), ex);
+            }
         }
     }
 }
