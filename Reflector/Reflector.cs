@@ -7,7 +7,7 @@ using OFD.Properties;
 namespace OFD.Data
 {
     /// <summary>
-    /// This class converts an object instances' class name and properties into meaningful Oracle parameters and tokens.
+    /// This class converts an Model instances' class name and properties into meaningful Oracle parameters and tokens.
     /// </summary>
     public static class Reflector
     {
@@ -27,24 +27,24 @@ namespace OFD.Data
             }
         }
 
-        public static string GetClassName(ref object instance)
+        /// <summary>
+        /// Returns the lowercase invariant name of the supplied instance type.
+        /// </summary>
+        /// <param name="instance">An Model with some scalar type properties.</param>
+        public static string GetClassName(ref Model instance)
         {
             return instance.GetType().Name.ToLowerInvariant();
         }
 
-        public static Dictionary<string, string> ResolveColumns(ref object instance)
+        /// <summary>
+        /// Returns a dictionary of column names, mapped to corresponding PL-SQL data types, for building DDL statements. 
+        /// </summary>
+        /// <param name="instance">An Model with some scalar type properties.</param>
+        public static Dictionary<string, string> ResolveColumns(ref Model instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            var propertyInfos = instance.GetType().GetProperties(
-                BindingFlags.Public
-                | BindingFlags.NonPublic
-                | BindingFlags.Static
-                | BindingFlags.Instance
-                | BindingFlags.FlattenHierarchy
-                );
-
-            foreach (var p in propertyInfos)
+            foreach (var p in GetWritableProperties(ref instance))
             {
                 dic.Add(p.Name.ToLowerInvariant(), TypeMap[p.PropertyType]);
             }
@@ -52,7 +52,11 @@ namespace OFD.Data
             return dic;
         }
 
-        public static Dictionary<string, string> ResolvePersistenceMappings(ref object instance)
+        /// <summary>
+        /// Returns a dictionary of column names, mapped to corresponding values, for building CRUD/DML statements. 
+        /// </summary>
+        /// <param name="instance">An Model with some scalar type properties.</param>
+        public static Dictionary<string, string> ResolvePersistenceMappings(ref Model instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -73,6 +77,10 @@ namespace OFD.Data
             return dic;
         }
 
+        /// <summary>
+        /// Returns an embedded text file resource located in the OFD.Data.Scripts namespace.
+        /// </summary>
+        /// <param name="name">The name of an embedded text file resource.</param>
         public static string GetEmbeddedResource(string name)
         {
             try
@@ -88,7 +96,11 @@ namespace OFD.Data
             }
         }
 
-        public static List<PropertyInfo> GetWritableProperties(ref object instance)
+        /// <summary>
+        /// Returns a list of properties of the supplied Model that are simple, scalar, types and in the Reflector.TypeMap.
+        /// </summary>
+        /// <param name="instance">An Model with some scalar type properties.</param>
+        public static List<PropertyInfo> GetWritableProperties(ref Model instance)
         {
             List<PropertyInfo> writable = new List<PropertyInfo>();
 
@@ -111,12 +123,22 @@ namespace OFD.Data
             return writable;
         }
 
-        public static int GetID(ref object instance)
+        /// <summary>
+        /// Returns the Model's ID
+        /// </summary>
+        /// <param name="instance">An Model with some scalar type properties.</param>
+        public static int GetID(ref Model instance)
         {
             return (int)instance.GetType().GetProperty("ID").GetValue(instance, null);
         }
 
-        public static void SetProperty(ref object instance, string name, object value)
+        /// <summary>
+        /// Sets a property of the specified Model.
+        /// </summary>
+        /// <param name="instance">An Model with some scalar type properties.</param>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value to set.</param>
+        public static void SetProperty(ref Model instance, string name, object value)
         {
             var property = instance.GetType().GetProperty(name);
 

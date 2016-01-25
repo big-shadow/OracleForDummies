@@ -90,7 +90,7 @@ namespace OFD.Data
             return val;
         }
 
-        public static void Persist(object instance)
+        public static void Persist(Model instance)
         {
             string table = Reflector.GetClassName(ref instance);
             string sql = string.Empty;
@@ -112,7 +112,7 @@ namespace OFD.Data
 
             }
 
-            // If the table exists or was created sucessfully, check to see if it has already been saved once before.
+            // If the table exists or was created successfully, check to see if it has already been saved once before.
             if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved before update the record, otherwise insert a new one.
@@ -144,7 +144,7 @@ namespace OFD.Data
 
         }
 
-        public static void GetWhereCondition(object instance, string condition)
+        public static void GetWhereCondition(Model instance, string condition)
         {
             string table = Reflector.GetClassName(ref instance);
             string sql = "SELECT * FROM " + table + " WHERE " + condition;
@@ -176,7 +176,7 @@ namespace OFD.Data
             }
         }
 
-        public static void Drop(object instance)
+        public static void Drop(Model instance)
         {
             string table = Reflector.GetClassName(ref instance);
 
