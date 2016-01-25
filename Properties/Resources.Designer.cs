@@ -70,11 +70,20 @@ namespace OFD.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to fetch {0} where ID = {1}..
+        ///   Looks up a localized string similar to Failed to drop {0}. It still exists..
         /// </summary>
-        internal static string NoFetchWhereID {
+        internal static string NoDrop {
             get {
-                return ResourceManager.GetString("NoFetchWhereID", resourceCulture);
+                return ResourceManager.GetString("NoDrop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to fetch {0} where {1}..
+        /// </summary>
+        internal static string NoFetchWhere {
+            get {
+                return ResourceManager.GetString("NoFetchWhere", resourceCulture);
             }
         }
         

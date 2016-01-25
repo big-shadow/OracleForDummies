@@ -7,11 +7,13 @@ namespace OFD.Data
     /// <summary>
     /// This class contains only boolean members. It exists only to make database related assertions. 
     /// </summary>
-    class Sniffer
+    public static class Sniffer
     {
+        public const bool ON = true;
+
         public static bool TableExists(string name, OracleConnection con)
         {
-            string sql = "SELECT COUNT(*) AS c FROM " + name;
+            string sql = "SELECT count(*) AS c FROM " + name;
             string count = string.Empty;
             long output;
 
@@ -36,7 +38,10 @@ namespace OFD.Data
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(string.Format(Resources.NoSniff, name), ex);
+                    if (!ex.Message.Contains("ORA-00942"))
+                    {
+                        throw new Exception(string.Format(Resources.NoSniff, name), ex);
+                    }
                 }
             }
 
@@ -76,7 +81,7 @@ namespace OFD.Data
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception(string.Format(Resources.NoSniff, name), ex);
                 }
@@ -87,10 +92,7 @@ namespace OFD.Data
 
             if (Int32.TryParse(count, out output))
             {
-                if(output > 0)
-                {
-                    return true;
-                }
+                return output > 0;
             }
 
             return false;

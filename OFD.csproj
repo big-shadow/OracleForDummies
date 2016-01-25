@@ -64,6 +64,9 @@
     <EmbeddedResource Include="Data\Scripts\UpdateTrigger.txt">
       <CustomToolNamespace>OFD.Data</CustomToolNamespace>
     </EmbeddedResource>
+    <EmbeddedResource Include="Data\Scripts\DropTable.txt">
+      <CustomToolNamespace>OFD.Data</CustomToolNamespace>
+    </EmbeddedResource>
     <Content Include="TODO.txt" />
   </ItemGroup>
 </Project>

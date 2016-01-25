@@ -24,12 +24,17 @@ namespace OFD
 
         public virtual void GetWhereID(int id)
         {      
-            Transactor.GetWhereID(this, id);
+            GetWhereCondition("ID =" + id);
         }
 
-        public static T GetWhereID<T>(int id) where T : new()
+        public virtual void GetWhereCondition(string condition)
         {
-            return Transactor.GetWhereID<T>(typeof(T), id);
+            Transactor.GetWhereCondition(this, condition);
+        }
+
+        public virtual void Drop()
+        {
+            Transactor.Drop(this);
         }
     }
 }

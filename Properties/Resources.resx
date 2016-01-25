@@ -120,8 +120,11 @@
   <data name="NoConnection" xml:space="preserve">
     <value>Failed to connect using the {0} connection string.</value>
   </data>
-  <data name="NoFetchWhereID" xml:space="preserve">
-    <value>Failed to fetch {0} where ID = {1}.</value>
+  <data name="NoDrop" xml:space="preserve">
+    <value>Failed to drop {0}. It still exists.</value>
+  </data>
+  <data name="NoFetchWhere" xml:space="preserve">
+    <value>Failed to fetch {0} where {1}.</value>
   </data>
   <data name="NoID" xml:space="preserve">
     <value>Failed to get the last updated {0} ID.</value>

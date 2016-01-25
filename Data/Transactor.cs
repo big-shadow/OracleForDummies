@@ -96,7 +96,7 @@ namespace OFD.Data
             string sql = string.Empty;
 
             // Prepare a create table statement if the table doesn't exist. Then make a trigger to write to it after updates.
-            if (!Sniffer.TableExists(table, GetConnection()))
+            if (Sniffer.ON && !Sniffer.TableExists(table, GetConnection()))
             {
                 try
                 {
@@ -113,7 +113,7 @@ namespace OFD.Data
             }
 
             // If the table exists or was created sucessfully, check to see if it has already been saved once before.
-            if (Sniffer.TableExists(table, GetConnection()))
+            if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved once update the record, otherwise insert a new one.
                 if (Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
@@ -145,10 +145,10 @@ namespace OFD.Data
 
         }
 
-        public static void GetWhereID(object instance, int id)
+        public static void GetWhereCondition(object instance, string condition)
         {
             string table = Reflector.GetClassName(ref instance);
-            string sql = "SELECT * FROM " + table + " WHERE ID = " + id;
+            string sql = "SELECT * FROM " + table + " WHERE " + condition;
 
             try
             {
@@ -173,7 +173,24 @@ namespace OFD.Data
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format(Resources.NoFetchWhereID, table, id), ex);
+                throw new Exception(string.Format(Resources.NoFetchWhere, table, condition), ex);
+            }
+        }
+
+        public static void Drop(object instance)
+        {
+            string table = Reflector.GetClassName(ref instance);
+
+            try
+            {
+                if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
+                {
+                    Execute(Reflector.GetEmbeddedResource("DropTable").Replace(TokenEnum.TABLE.ToString(), table));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format(Resources.NoDrop, table), ex);
             }
         }
     }
