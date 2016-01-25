@@ -9,6 +9,9 @@ namespace OFD.Data
     /// </summary>
     public static class Sniffer
     {
+        /// <summary>
+        /// Set this to false when in a production enviroment for performance boosts.
+        /// </summary>
         public const bool ON = true;
 
         public static bool TableExists(string name, OracleConnection con)

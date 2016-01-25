@@ -115,10 +115,9 @@ namespace OFD.Data
             // If the table exists or was created sucessfully, check to see if it has already been saved once before.
             if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
             {
-                // If it's been saved once update the record, otherwise insert a new one.
+                // If it's been saved before update the record, otherwise insert a new one.
                 if (Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
                 {
-                    // TODO: Update statement.
                     sql = SQLBuilder.GetUpdateStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
                 }
                 else
