@@ -3,6 +3,8 @@
 
 bin/
 obj/
+TODO.txt
+*.config
 
 # User-specific files
 *.suo
