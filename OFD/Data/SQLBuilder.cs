@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace OFD.Data
@@ -8,20 +9,46 @@ namespace OFD.Data
     /// </summary>
     public static class SQLBuilder
     {
+        public static string Hash(string identifier)
+        {
+            if(identifier.Length > 30)
+            {
+                byte[] data;
+
+                using (MD5 md5Hash = MD5.Create())
+                {
+                    data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(identifier));
+                }
+
+                StringBuilder sBuilder = new StringBuilder();
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("x2"));
+                }
+
+                return identifier.Substring(0, 24) + "_" + sBuilder.ToString().Substring(0, 5).ToUpperInvariant();
+            }
+
+            return identifier;
+        }
+
         public static string GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
         {
             string delimiter = "";
-            StringBuilder statement = new StringBuilder("CREATE TABLE " + tablename + " (");
+            StringBuilder statement = new StringBuilder("CREATE TABLE " + Hash(tablename) + " (");
 
             foreach (KeyValuePair<string, string> column in columns)
             {
+                string identifier = Hash(column.Key);
+
                 if (column.Key.Equals("id"))
                 {
-                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL");
+                    statement.AppendLine(delimiter + identifier + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL");
                 }
                 else
                 {
-                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value);
+                    statement.AppendLine(delimiter + identifier + ' ' + column.Value);
                 }
 
                 delimiter = ", ";
@@ -38,7 +65,7 @@ namespace OFD.Data
         {
             string delimiter = string.Empty;
 
-            StringBuilder statement = new StringBuilder("INSERT INTO " + tablename + " (");
+            StringBuilder statement = new StringBuilder("INSERT INTO " + Hash(tablename) + " (");
             StringBuilder values = new StringBuilder(") VALUES (");
 
             foreach (KeyValuePair<string, string> column in columns)
@@ -48,8 +75,9 @@ namespace OFD.Data
                 {
                     continue;
                 }
+                string identifier = Hash(column.Key);
 
-                statement.Append(delimiter + column.Key);
+                statement.Append(delimiter + identifier);
                 values.Append(delimiter + column.Value);
 
                 delimiter = ", ";
@@ -64,7 +92,7 @@ namespace OFD.Data
         {
             string delimiter = string.Empty;
 
-            StringBuilder statement = new StringBuilder("UPDATE " + tablename + " SET ");
+            StringBuilder statement = new StringBuilder("UPDATE " + Hash(tablename) + " SET ");
 
             foreach (KeyValuePair<string, string> column in columns)
             {
@@ -74,7 +102,9 @@ namespace OFD.Data
                     continue;
                 }
 
-                statement.Append(delimiter + column.Key + " = " + column.Value);
+                string identifier = Hash(column.Key);
+
+                statement.Append(delimiter + identifier + " = " + column.Value);
                 delimiter = ", ";
             }
 

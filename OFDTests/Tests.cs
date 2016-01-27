@@ -1,4 +1,5 @@
 ﻿using OFD;
+using OFD.Data;
 
 namespace OFDTests
 {
@@ -77,6 +78,14 @@ namespace OFDTests
                 Thing thing = Thing.GetWhereCondition<Thing>("Name = 'Joe'");
 
                 return thing.Name.Equals("Joe");
+            }));
+
+            tests.Add(new Test("Hash Long Identifier", delegate
+            {
+                string identifier = "This is most definitely longer than thirty characters.";
+                identifier = SQLBuilder.Hash(identifier);
+
+                return identifier.Length <= 30;
             }));
         }
     }
