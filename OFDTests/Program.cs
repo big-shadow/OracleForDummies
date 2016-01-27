@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using OFD;
 
 namespace OFDTests
 {
@@ -38,16 +37,6 @@ namespace OFDTests
         {
             this.RunTest = func;
             this.Name = name;
-        }
-    }
-
-    public class Thing : Model
-    {
-        public string Name { get; set; }
-
-        public Thing(int id = 0) : base(id)
-        {
-
         }
     }
 }

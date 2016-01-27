@@ -1,5 +1,22 @@
-﻿namespace OFDTests
+﻿using OFD;
+
+namespace OFDTests
 {
+    public class Thing : Model
+    {
+        public string Name { get; set; }
+
+        public Thing(int id = 0) : base(id)
+        {
+
+        }
+
+        public Thing() : base()
+        {
+
+        }
+    }
+
     partial class Program
     {
         public static void MakeTests()
@@ -24,19 +41,40 @@
                 return thing.ID == 1;
             }));
 
-            tests.Add(new Test("Fetch Where ID", delegate
+            tests.Add(new Test("Set Where ID", delegate
             {
                 Thing thing = new Thing();
                 thing.Name = "Not Joe";
-                thing.GetWhereID(1);
+                thing.SetWhereID(1);
 
                 return thing.Name.Equals("Joe");
             }));
 
-            tests.Add(new Test("Constructor Fetch Where ID", delegate
+            tests.Add(new Test("Constructor Set Where ID", delegate
+            {
+                Thing thing = new Thing(1);
+
+                return thing.Name.Equals("Joe");
+            }));
+
+            tests.Add(new Test("Set Where Condition", delegate
             {
                 Thing thing = new Thing();
-                thing.GetWhereCondition("Name = 'Joe'");
+                thing.SetWhereCondition("Name = 'Joe'");
+
+                return thing.Name.Equals("Joe");
+            }));
+
+            tests.Add(new Test("Static Fetch Where ID", delegate
+            {
+                Thing thing = Thing.GetWhereID<Thing>(1);
+
+                return thing.Name.Equals("Joe");
+            }));
+
+            tests.Add(new Test("Static Fetch Where Condition", delegate
+            {
+                Thing thing = Thing.GetWhereCondition<Thing>("Name = 'Joe'");
 
                 return thing.Name.Equals("Joe");
             }));

@@ -1,11 +1,13 @@
 ﻿using OFD.Data;
+using OFD.Properties;
+using System;
 
 namespace OFD
 {
     /// <summary>
-    /// This class is to be inherited for simple Oracle persistance provided by the OracleForDummies library. 
+    /// This class is to be inherited for simple Oracle persistence provided by the OracleForDummies library. 
     /// </summary>
-    public class Model
+    public abstract class Model : IModel
     {
         public int ID { get; set; }
 
@@ -13,21 +15,22 @@ namespace OFD
         {
             if(id > 0)
             {
-                GetWhereID(id);
+                Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));
             }
         }
 
+        // Virtual members.
         public virtual void Save()
         {
             Transactor.Persist(this);
         }
 
-        public virtual void GetWhereID(int id)
-        {      
-            GetWhereCondition("ID =" + id);
+        public virtual void SetWhereID(int id)
+        {
+            Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));
         }
 
-        public virtual void GetWhereCondition(string condition)
+        public virtual void SetWhereCondition(string condition)
         {
             Transactor.GetWhereCondition(this, condition);
         }
@@ -35,6 +38,23 @@ namespace OFD
         public virtual void Drop()
         {
             Transactor.Drop(this);
+        }
+
+        // Static members.
+        public static T GetWhereID<T>(int id) where T : Model, new()
+        {
+            T child = new T();
+            Transactor.GetWhereCondition(child, string.Format(Resources.WhereID, id));
+
+            return child;
+        }
+
+        public static T GetWhereCondition<T>(string condition) where T : Model, new()
+        {
+            T child = new T();
+            Transactor.GetWhereCondition(child, condition);
+
+            return child;
         }
     }
 }

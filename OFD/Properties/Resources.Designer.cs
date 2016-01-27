@@ -131,5 +131,14 @@ namespace OFD.Properties {
                 return ResourceManager.GetString("NoTable", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ID = {0}.
+        /// </summary>
+        internal static string WhereID {
+            get {
+                return ResourceManager.GetString("WhereID", resourceCulture);
+            }
+        }
     }
 }

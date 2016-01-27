@@ -141,4 +141,7 @@
   <data name="NoTable" xml:space="preserve">
     <value>Falied to create the {0} table.</value>
   </data>
+  <data name="WhereID" xml:space="preserve">
+    <value>ID = {0}</value>
+  </data>
 </root>
