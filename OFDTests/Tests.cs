@@ -83,7 +83,7 @@ namespace OFDTests
             tests.Add(new Test("Hash Long Identifier", delegate
             {
                 string identifier = "This is most definitely longer than thirty characters.";
-                identifier = SQLBuilder.Hash(identifier);
+                identifier = Hasher.Hash(identifier);
 
                 return identifier.Length <= 30;
             }));

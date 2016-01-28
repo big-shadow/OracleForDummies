@@ -11,11 +11,11 @@ namespace OFD.Data
         public static string GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
         {
             string delimiter = "";
-            StringBuilder statement = new StringBuilder("CREATE TABLE " + Hasher.Hash(tablename) + " (");
+            StringBuilder statement = new StringBuilder("CREATE TABLE " + tablename + " (");
 
             foreach (KeyValuePair<string, string> column in columns)
             {
-                string identifier = Hasher.Hash(column.Key);
+                string identifier = column.Key;
 
                 if (column.Key.Equals("id"))
                 {
@@ -40,7 +40,7 @@ namespace OFD.Data
         {
             string delimiter = string.Empty;
 
-            StringBuilder statement = new StringBuilder("INSERT INTO " + Hasher.Hash(tablename) + " (");
+            StringBuilder statement = new StringBuilder("INSERT INTO " + tablename + " (");
             StringBuilder values = new StringBuilder(") VALUES (");
 
             foreach (KeyValuePair<string, string> column in columns)
@@ -50,7 +50,7 @@ namespace OFD.Data
                 {
                     continue;
                 }
-                string identifier = Hasher.Hash(column.Key);
+                string identifier = column.Key;
 
                 statement.Append(delimiter + identifier);
                 values.Append(delimiter + column.Value);
@@ -67,7 +67,7 @@ namespace OFD.Data
         {
             string delimiter = string.Empty;
 
-            StringBuilder statement = new StringBuilder("UPDATE " + Hasher.Hash(tablename) + " SET ");
+            StringBuilder statement = new StringBuilder("UPDATE " + tablename + " SET ");
 
             foreach (KeyValuePair<string, string> column in columns)
             {
@@ -77,7 +77,7 @@ namespace OFD.Data
                     continue;
                 }
 
-                string identifier = Hasher.Hash(column.Key);
+                string identifier = column.Key;
 
                 statement.Append(delimiter + identifier + " = " + column.Value);
                 delimiter = ", ";
