@@ -117,7 +117,7 @@ namespace OFD.Data
             if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved before update the record, otherwise insert a new one.
-                if (Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
+                if (Sniffer.RecordExists(table, (int)Reflector.GetProperty(ref instance, "ID"), GetConnection()))
                 {
                     sql = SQLBuilder.GetUpdateStatement(table, Reflector.GetPersistenceMap(ref instance));
                 }
@@ -132,7 +132,7 @@ namespace OFD.Data
             {
                 if (Execute(sql))
                 {
-                    if (Reflector.GetID(ref instance) == 0)
+                    if ((int)Reflector.GetProperty(ref instance, "ID") == 0)
                     {
                         Reflector.SetProperty(ref instance, "ID", GetLastUpdatedId(table));
                     }
@@ -160,11 +160,16 @@ namespace OFD.Data
                         {
                             if (reader.Read())
                             {
-                                foreach (var p in Reflector.GetWritableProperties(ref instance))
+                                for (int i = 0; i < reader.FieldCount; i++)
                                 {
-                                    Reflector.SetProperty(ref instance, p.Name, reader[instance.Cache.IdentityCache[p.Name]]);
+                                    string name = reader.GetName(i).ToUpperInvariant();
+
+                                    if (instance.Cache.IdentityCache.ContainsKey(name))
+                                    {
+                                        Reflector.SetProperty(ref instance, instance.Cache.IdentityCache[name], reader[name]);
+                                    }
                                 }
-                            } 
+                            }
                         }
                     }
 

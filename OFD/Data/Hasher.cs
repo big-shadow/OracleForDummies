@@ -26,7 +26,7 @@ namespace OFD
                 return (identifier.Substring(0, 24) + "_" + sBuilder.ToString().Substring(0, 5)).ToUpperInvariant();
             }
 
-            return identifier;
+            return identifier.ToUpperInvariant();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using OFD.Data;
 using OFD.Caching;
-using OFD.Properties;
 using OFD.Reflection;
+using OFD.Properties;
 
 namespace OFD
 {
@@ -10,14 +10,17 @@ namespace OFD
     /// </summary>
     public abstract class Model : IModel
     {
+        // Properties.
         public int ID { get; set; }
         public Cache Cache { get; set; }
 
+        // Constructor.
         public Model(int id = 0)
         {
-            Cache.IdentityCache = Reflector.GetIdentityMap(this);
+            this.Cache = new Cache(); 
+            this.Cache.IdentityCache = Reflector.GetIdentityMap(this.GetType());
 
-            if(id > 0)
+            if (id > 0)
             {
                 Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));
             }
@@ -47,7 +50,7 @@ namespace OFD
         // Static members.
         public static T GetWhereID<T>(int id) where T : Model, new()
         {
-            T child = new T();
+            T child = Reflector.GetUninitializedObject<T>();
             Transactor.GetWhereCondition(child, string.Format(Resources.WhereID, id));
 
             return child;
@@ -55,7 +58,7 @@ namespace OFD
 
         public static T GetWhereCondition<T>(string condition) where T : Model, new()
         {
-            T child = new T();
+            T child = Reflector.GetUninitializedObject<T>();
             Transactor.GetWhereCondition(child, condition);
 
             return child;

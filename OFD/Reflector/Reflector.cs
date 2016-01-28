@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Runtime.Serialization;
 using OFD.Properties;
 
 namespace OFD.Reflection
@@ -44,9 +45,11 @@ namespace OFD.Reflection
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            foreach (var p in GetWritableProperties(ref instance))
+            foreach (KeyValuePair<string, string> index in instance.Cache.IdentityCache)
             {
-                dic.Add(instance.Cache.IdentityCache[p.Name], TypeMap[p.PropertyType]);
+                Type type = GetPropertyType(ref instance, index.Value);
+
+                dic.Add(index.Key, TypeMap[type]);
             }
 
             return dic;
@@ -60,17 +63,20 @@ namespace OFD.Reflection
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            foreach (var p in GetWritableProperties(ref instance))
+            foreach (KeyValuePair<string, string> index in instance.Cache.IdentityCache)
             {
-                object val = p.GetValue(instance, null);
+                object p = GetProperty(ref instance, index.Value);
 
-                if (p.PropertyType.Equals(typeof(String)))
+                if (p != null && !string.IsNullOrWhiteSpace(p.ToString()))
                 {
-                    dic.Add(instance.Cache.IdentityCache[p.Name], "'" + val.ToString() + "'");
-                }
-                else
-                {
-                    dic.Add(instance.Cache.IdentityCache[p.Name], val.ToString());
+                    if (p.GetType().Equals(typeof(String)))
+                    {
+                        dic.Add(index.Key, "'" + p.ToString() + "'");
+                    }
+                    else
+                    {
+                        dic.Add(index.Key, p.ToString());
+                    }
                 }
             }
 
@@ -81,13 +87,15 @@ namespace OFD.Reflection
         /// Returns a dictionary that maps property names to their hashed PL-SQL identity counterparts.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static Dictionary<string, string> GetIdentityMap(Model instance)
+        public static Dictionary<string, string> GetIdentityMap(Type type)
         {
+            Model instance = (Model)FormatterServices.GetUninitializedObject(type);
+
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
             foreach (var p in GetWritableProperties(ref instance))
             {
-                dic.Add(p.Name, Hasher.Hash(p.Name));
+                dic.Add(Hasher.Hash(p.Name), p.Name);
             }
 
             return dic;
@@ -140,12 +148,23 @@ namespace OFD.Reflection
         }
 
         /// <summary>
-        /// Returns the Model's ID
+        /// Returns a property of the supplied instance.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static int GetID(ref Model instance)
+        public static object GetProperty(ref Model instance, string name)
         {
-            return (int)instance.GetType().GetProperty("ID").GetValue(instance, null);
+            return instance.GetType().GetProperty(name).GetValue(instance, null);
+        }
+
+        /// <summary>
+        /// Gets the type of a property.
+        /// </summary>
+        /// <param name="instance">A Model the owns the property.</param>
+        /// <param name="name">The property name.</param>
+        /// <returns></returns>
+        public static Type GetPropertyType(ref Model instance, string name)
+        {
+            return instance.GetType().GetProperty(name).PropertyType;
         }
 
         /// <summary>
@@ -158,11 +177,16 @@ namespace OFD.Reflection
         {
             try
             {
+                if (value.GetType().Equals(typeof(DBNull)))
+                {
+                    return;
+                }
+
                 var property = instance.GetType().GetProperty(name);
 
-                if (value.GetType().Equals(typeof(long)))
+                if (value.GetType().Equals(typeof(long)) && (long)value < int.MaxValue)
                 {
-                    property.SetValue(instance, unchecked((int)(long)value), null); 
+                    property.SetValue(instance, unchecked((int)(long)value), null);
                 }
                 else
                 {
@@ -173,6 +197,21 @@ namespace OFD.Reflection
             {
                 throw new Exception(string.Format(Resources.NoSetProperty, name, instance.GetType().ToString()), ex);
             }
+        }
+
+        /// <summary>
+        /// Returns an uninitialized object for reflection purposes. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T GetUninitializedObject<T>() where T : Model, new()
+        {
+            T child = (T)FormatterServices.GetUninitializedObject(typeof(T));
+
+            child.Cache = new Caching.Cache();
+            child.Cache.IdentityCache = GetIdentityMap(typeof(T));
+
+            return child;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace OFDTests
     {
         public string Name { get; set; }
 
+        public string PropertyNameThatIsLongerThanThirtyCharacters { get; set; }
+
         public Thing(int id = 0) : base(id)
         {
 
@@ -66,11 +68,18 @@ namespace OFDTests
                 return thing.Name.Equals("Joe");
             }));
 
-            tests.Add(new Test("Static Fetch Where ID", delegate
+            tests.Add(new Test("Static Fetch Where ID Values", delegate
             {
                 Thing thing = Thing.GetWhereID<Thing>(1);
 
                 return thing.Name.Equals("Joe");
+            }));
+
+            tests.Add(new Test("Static Fetch Where ID Type", delegate
+            {
+                Thing thing = Thing.GetWhereID<Thing>(1);
+
+                return thing.GetType().Equals(typeof(Thing));
             }));
 
             tests.Add(new Test("Static Fetch Where Condition", delegate
@@ -87,6 +96,19 @@ namespace OFDTests
 
                 return identifier.Length <= 30;
             }));
+
+            tests.Add(new Test("Fetch Long Identifier", delegate
+            {
+                Thing thing = new Thing(1);
+                thing.Name = "Joe";
+                thing.PropertyNameThatIsLongerThanThirtyCharacters = "This";
+                thing.Save();
+
+                thing.SetWhereID(1);
+
+                return thing.PropertyNameThatIsLongerThanThirtyCharacters.Equals("This");
+            }));
+
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace OFD
 {
-    interface IModel
+    public interface IModel
     {
         int ID { get; set; }
 

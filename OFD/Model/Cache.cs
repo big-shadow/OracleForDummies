@@ -2,7 +2,7 @@
 
 namespace OFD.Caching
 {
-    public class Cache
+    public sealed class Cache
     {
         public Dictionary<string, string> IdentityCache { get; set; }
     }

@@ -17,7 +17,7 @@ namespace OFD.Data
             {
                 string identifier = column.Key;
 
-                if (column.Key.Equals("id"))
+                if (column.Key.Equals("ID"))
                 {
                     statement.AppendLine(delimiter + identifier + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL");
                 }
@@ -46,7 +46,7 @@ namespace OFD.Data
             foreach (KeyValuePair<string, string> column in columns)
             {
                 // Skip the ID because it's auto-incrementing.
-                if (column.Key.Equals("id"))
+                if (column.Key.Equals("ID"))
                 {
                     continue;
                 }
@@ -72,7 +72,7 @@ namespace OFD.Data
             foreach (KeyValuePair<string, string> column in columns)
             {
                 // Skip the ID.
-                if (column.Key.Equals("id"))
+                if (column.Key.Equals("ID"))
                 {
                     continue;
                 }
@@ -83,7 +83,7 @@ namespace OFD.Data
                 delimiter = ", ";
             }
 
-            statement.Append(" WHERE ID = " + columns["id"]);
+            statement.Append(" WHERE ID = " + columns["ID"]);
 
             return statement.ToString();
         }
