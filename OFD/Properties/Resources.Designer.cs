@@ -115,6 +115,15 @@ namespace OFD.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to set the {0} property of the {1} instance..
+        /// </summary>
+        internal static string NoSetProperty {
+            get {
+                return ResourceManager.GetString("NoSetProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to sniff the {0} table..
         /// </summary>
         internal static string NoSniff {

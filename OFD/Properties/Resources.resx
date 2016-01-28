@@ -135,6 +135,9 @@
   <data name="NoResource" xml:space="preserve">
     <value>Failed to get the {0} embedded resource.</value>
   </data>
+  <data name="NoSetProperty" xml:space="preserve">
+    <value>Failed to set the {0} property of the {1} instance.</value>
+  </data>
   <data name="NoSniff" xml:space="preserve">
     <value>Failed to sniff the {0} table.</value>
   </data>

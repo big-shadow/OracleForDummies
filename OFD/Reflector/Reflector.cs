@@ -4,10 +4,10 @@ using System;
 using System.IO;
 using OFD.Properties;
 
-namespace OFD.Data
+namespace OFD.Reflection
 {
     /// <summary>
-    /// This class converts an Model instances' class name and properties into meaningful Oracle parameters and tokens.
+    /// This class converts A Model instances' class name and properties into meaningful Oracle parameters and tokens.
     /// </summary>
     public static class Reflector
     {
@@ -30,23 +30,23 @@ namespace OFD.Data
         /// <summary>
         /// Returns the lowercase invariant name of the supplied instance type.
         /// </summary>
-        /// <param name="instance">An Model with some scalar type properties.</param>
-        public static string GetClassName(ref Model instance)
+        /// <param name="instance">A Model with some scalar type properties.</param>
+        public static string GetTableName(ref Model instance)
         {
-            return instance.GetType().Name.ToLowerInvariant();
+            return Hasher.Hash(instance.GetType().Name);
         }
 
         /// <summary>
         /// Returns a dictionary of column names, mapped to corresponding PL-SQL data types, for building DDL statements. 
         /// </summary>
-        /// <param name="instance">An Model with some scalar type properties.</param>
-        public static Dictionary<string, string> ResolveColumns(ref Model instance)
+        /// <param name="instance">A Model with some scalar type properties.</param>
+        public static Dictionary<string, string> GetColumnMap(ref Model instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
             foreach (var p in GetWritableProperties(ref instance))
             {
-                dic.Add(p.Name.ToLowerInvariant(), TypeMap[p.PropertyType]);
+                dic.Add(instance.Cache.IdentityCache[p.Name], TypeMap[p.PropertyType]);
             }
 
             return dic;
@@ -55,8 +55,8 @@ namespace OFD.Data
         /// <summary>
         /// Returns a dictionary of column names, mapped to corresponding values, for building CRUD/DML statements. 
         /// </summary>
-        /// <param name="instance">An Model with some scalar type properties.</param>
-        public static Dictionary<string, string> ResolvePersistenceMappings(ref Model instance)
+        /// <param name="instance">A Model with some scalar type properties.</param>
+        public static Dictionary<string, string> GetPersistenceMap(ref Model instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -66,12 +66,28 @@ namespace OFD.Data
 
                 if (p.PropertyType.Equals(typeof(String)))
                 {
-                    dic.Add(p.Name.ToLowerInvariant(), "'" + val.ToString() + "'");
+                    dic.Add(instance.Cache.IdentityCache[p.Name], "'" + val.ToString() + "'");
                 }
                 else
                 {
-                    dic.Add(p.Name.ToLowerInvariant(), val.ToString());
+                    dic.Add(instance.Cache.IdentityCache[p.Name], val.ToString());
                 }
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// Returns a dictionary that maps property names to their hashed PL-SQL identity counterparts.
+        /// </summary>
+        /// <param name="instance">A Model with some scalar type properties.</param>
+        public static Dictionary<string, string> GetIdentityMap(Model instance)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+
+            foreach (var p in GetWritableProperties(ref instance))
+            {
+                dic.Add(p.Name, Hasher.Hash(p.Name));
             }
 
             return dic;
@@ -99,7 +115,7 @@ namespace OFD.Data
         /// <summary>
         /// Returns a list of properties of the supplied Model that are simple, scalar, types and in the Reflector.TypeMap.
         /// </summary>
-        /// <param name="instance">An Model with some scalar type properties.</param>
+        /// <param name="instance">A Model with some scalar type properties.</param>
         public static List<PropertyInfo> GetWritableProperties(ref Model instance)
         {
             List<PropertyInfo> writable = new List<PropertyInfo>();
@@ -126,7 +142,7 @@ namespace OFD.Data
         /// <summary>
         /// Returns the Model's ID
         /// </summary>
-        /// <param name="instance">An Model with some scalar type properties.</param>
+        /// <param name="instance">A Model with some scalar type properties.</param>
         public static int GetID(ref Model instance)
         {
             return (int)instance.GetType().GetProperty("ID").GetValue(instance, null);
@@ -135,20 +151,27 @@ namespace OFD.Data
         /// <summary>
         /// Sets a property of the specified Model.
         /// </summary>
-        /// <param name="instance">An Model with some scalar type properties.</param>
+        /// <param name="instance">A Model with some scalar type properties.</param>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value to set.</param>
         public static void SetProperty(ref Model instance, string name, object value)
         {
-            var property = instance.GetType().GetProperty(name);
+            try
+            {
+                var property = instance.GetType().GetProperty(name);
 
-            if (value.GetType().Equals(typeof(long)))
-            {
-                property.SetValue(instance, unchecked((int)(long)value), null);
+                if (value.GetType().Equals(typeof(long)))
+                {
+                    property.SetValue(instance, unchecked((int)(long)value), null); 
+                }
+                else
+                {
+                    property.SetValue(instance, value, null);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                property.SetValue(instance, value, null);
+                throw new Exception(string.Format(Resources.NoSetProperty, name, instance.GetType().ToString()), ex);
             }
         }
     }

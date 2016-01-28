@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace OFD.Data
@@ -9,38 +8,14 @@ namespace OFD.Data
     /// </summary>
     public static class SQLBuilder
     {
-        public static string Hash(string identifier)
-        {
-            if(identifier.Length > 30)
-            {
-                byte[] data;
-
-                using (MD5 md5Hash = MD5.Create())
-                {
-                    data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(identifier));
-                }
-
-                StringBuilder sBuilder = new StringBuilder();
-
-                for (int i = 0; i < data.Length; i++)
-                {
-                    sBuilder.Append(data[i].ToString("x2"));
-                }
-
-                return identifier.Substring(0, 24) + "_" + sBuilder.ToString().Substring(0, 5).ToUpperInvariant();
-            }
-
-            return identifier;
-        }
-
         public static string GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
         {
             string delimiter = "";
-            StringBuilder statement = new StringBuilder("CREATE TABLE " + Hash(tablename) + " (");
+            StringBuilder statement = new StringBuilder("CREATE TABLE " + Hasher.Hash(tablename) + " (");
 
             foreach (KeyValuePair<string, string> column in columns)
             {
-                string identifier = Hash(column.Key);
+                string identifier = Hasher.Hash(column.Key);
 
                 if (column.Key.Equals("id"))
                 {
@@ -65,7 +40,7 @@ namespace OFD.Data
         {
             string delimiter = string.Empty;
 
-            StringBuilder statement = new StringBuilder("INSERT INTO " + Hash(tablename) + " (");
+            StringBuilder statement = new StringBuilder("INSERT INTO " + Hasher.Hash(tablename) + " (");
             StringBuilder values = new StringBuilder(") VALUES (");
 
             foreach (KeyValuePair<string, string> column in columns)
@@ -75,7 +50,7 @@ namespace OFD.Data
                 {
                     continue;
                 }
-                string identifier = Hash(column.Key);
+                string identifier = Hasher.Hash(column.Key);
 
                 statement.Append(delimiter + identifier);
                 values.Append(delimiter + column.Value);
@@ -92,7 +67,7 @@ namespace OFD.Data
         {
             string delimiter = string.Empty;
 
-            StringBuilder statement = new StringBuilder("UPDATE " + Hash(tablename) + " SET ");
+            StringBuilder statement = new StringBuilder("UPDATE " + Hasher.Hash(tablename) + " SET ");
 
             foreach (KeyValuePair<string, string> column in columns)
             {
@@ -102,7 +77,7 @@ namespace OFD.Data
                     continue;
                 }
 
-                string identifier = Hash(column.Key);
+                string identifier = Hasher.Hash(column.Key);
 
                 statement.Append(delimiter + identifier + " = " + column.Value);
                 delimiter = ", ";

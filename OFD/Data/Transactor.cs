@@ -1,6 +1,7 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
 using OFD.Properties;
+using OFD.Reflection;
 
 namespace OFD.Data
 {
@@ -92,7 +93,7 @@ namespace OFD.Data
 
         public static void Persist(Model instance)
         {
-            string table = Reflector.GetClassName(ref instance);
+            string table = Reflector.GetTableName(ref instance);
             string sql = string.Empty;
 
             // Prepare a create table statement if the table doesn't exist. Then make a trigger to write to it after updates.
@@ -100,7 +101,7 @@ namespace OFD.Data
             {
                 try
                 {
-                    if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.ResolveColumns(ref instance))))
+                    if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.GetColumnMap(ref instance))))
                     {
                         Execute(Reflector.GetEmbeddedResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
                     }
@@ -118,11 +119,11 @@ namespace OFD.Data
                 // If it's been saved before update the record, otherwise insert a new one.
                 if (Sniffer.RecordExists(table, Reflector.GetID(ref instance), GetConnection()))
                 {
-                    sql = SQLBuilder.GetUpdateStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
+                    sql = SQLBuilder.GetUpdateStatement(table, Reflector.GetPersistenceMap(ref instance));
                 }
                 else
                 {
-                    sql = SQLBuilder.GetInsertStatement(table, Reflector.ResolvePersistenceMappings(ref instance));
+                    sql = SQLBuilder.GetInsertStatement(table, Reflector.GetPersistenceMap(ref instance));
                 }
             }
 
@@ -146,7 +147,7 @@ namespace OFD.Data
 
         public static void GetWhereCondition(Model instance, string condition)
         {
-            string table = Reflector.GetClassName(ref instance);
+            string table = Reflector.GetTableName(ref instance);
             string sql = "SELECT * FROM " + table + " WHERE " + condition;
 
             try
@@ -161,9 +162,9 @@ namespace OFD.Data
                             {
                                 foreach (var p in Reflector.GetWritableProperties(ref instance))
                                 {
-                                    Reflector.SetProperty(ref instance, p.Name, reader[p.Name.ToUpperInvariant()]);
+                                    Reflector.SetProperty(ref instance, p.Name, reader[instance.Cache.IdentityCache[p.Name]]);
                                 }
-                            }
+                            } 
                         }
                     }
 
@@ -178,7 +179,7 @@ namespace OFD.Data
 
         public static void Drop(Model instance)
         {
-            string table = Reflector.GetClassName(ref instance);
+            string table = Reflector.GetTableName(ref instance);
 
             try
             {

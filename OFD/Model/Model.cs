@@ -1,5 +1,7 @@
 ﻿using OFD.Data;
+using OFD.Caching;
 using OFD.Properties;
+using OFD.Reflection;
 
 namespace OFD
 {
@@ -9,9 +11,12 @@ namespace OFD
     public abstract class Model : IModel
     {
         public int ID { get; set; }
+        public Cache Cache { get; set; }
 
         public Model(int id = 0)
         {
+            Cache.IdentityCache = Reflector.GetIdentityMap(this);
+
             if(id > 0)
             {
                 Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));
