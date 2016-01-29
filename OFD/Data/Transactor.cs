@@ -2,6 +2,7 @@
 using Oracle.ManagedDataAccess.Client;
 using OFD.Properties;
 using OFD.Reflection;
+using OFD.Caching;
 
 namespace OFD.Data
 {
@@ -61,7 +62,7 @@ namespace OFD.Data
 
         private static int GetLastUpdatedId(string tablename)
         {
-            string sql = "SELECT ID FROM " + tablename + " WHERE ROWNUM <= 1 ORDER BY time_updated DESC";
+            string sql = "SELECT MAX(ID)KEEP(DENSE_RANK LAST ORDER BY TIME_UPDATED) AS ID FROM " + tablename;
             int val = -1;
 
             using (OracleConnection con = GetConnection())
@@ -164,10 +165,11 @@ namespace OFD.Data
                                 {
                                     string name = reader.GetName(i).ToUpperInvariant();
 
-                                    if (instance.Cache.IdentityCache.ContainsKey(name))
+                                    if (Cache.Get(instance).IdentityCache.ContainsKey(name))
                                     {
-                                        Reflector.SetProperty(ref instance, instance.Cache.IdentityCache[name], reader[name]);
+                                        Reflector.SetProperty(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
                                     }
+                                    
                                 }
                             }
                         }

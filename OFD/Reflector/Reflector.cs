@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization;
 using OFD.Properties;
+using OFD.Caching;
 
 namespace OFD.Reflection
 {
@@ -45,7 +46,7 @@ namespace OFD.Reflection
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            foreach (KeyValuePair<string, string> index in instance.Cache.IdentityCache)
+            foreach (KeyValuePair<string, string> index in Cache.Get(instance).IdentityCache)
             {
                 Type type = GetPropertyType(ref instance, index.Value);
 
@@ -63,7 +64,7 @@ namespace OFD.Reflection
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            foreach (KeyValuePair<string, string> index in instance.Cache.IdentityCache)
+            foreach (KeyValuePair<string, string> index in Cache.Get(instance).IdentityCache)
             {
                 object p = GetProperty(ref instance, index.Value);
 
@@ -207,9 +208,6 @@ namespace OFD.Reflection
         public static T GetUninitializedObject<T>() where T : Model, new()
         {
             T child = (T)FormatterServices.GetUninitializedObject(typeof(T));
-
-            child.Cache = new Caching.Cache();
-            child.Cache.IdentityCache = GetIdentityMap(typeof(T));
 
             return child;
         }
