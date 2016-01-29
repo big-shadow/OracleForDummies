@@ -2,13 +2,15 @@
 using OFD.Caching;
 using OFD.Reflection;
 using OFD.Properties;
+using System.Collections.Generic;
+using System;
 
 namespace OFD
 {
     /// <summary>
     /// This class is to be inherited for simple Oracle persistence provided by the OracleForDummies library. 
     /// </summary>
-    public abstract class Model : IModel
+    public abstract class Model : IModel, ICloneable
     {
         // Properties.
         public int ID { get; set; }
@@ -18,8 +20,14 @@ namespace OFD
         {
             if (id > 0)
             {
-                Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));
+                Transactor.ScalarWhereCondition(this, string.Format(Resources.WhereID, id));
             }
+        }
+
+        // Interface implementations.
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
 
         // Virtual members.
@@ -30,12 +38,12 @@ namespace OFD
 
         public virtual void SetWhereID(int id)
         {
-            Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));
+            Transactor.ScalarWhereCondition(this, string.Format(Resources.WhereID, id));
         }
 
         public virtual void SetWhereCondition(string condition)
         {
-            Transactor.GetWhereCondition(this, condition);
+            Transactor.ScalarWhereCondition(this, condition);
         }
 
         public virtual void Drop()
@@ -44,20 +52,25 @@ namespace OFD
         }
 
         // Static members.
-        public static T GetWhereID<T>(int id) where T : Model, new()
+        public static T ScalarWhereID<T>(int id) where T : Model, new()
         {
             T child = Reflector.GetUninitializedObject<T>();
-            Transactor.GetWhereCondition(child, string.Format(Resources.WhereID, id));
+            Transactor.ScalarWhereCondition(child, string.Format(Resources.WhereID, id));
 
             return child;
         }
 
-        public static T GetWhereCondition<T>(string condition) where T : Model, new()
+        public static T ScalarWhereCondition<T>(string condition) where T : Model, new()
         {
             T child = Reflector.GetUninitializedObject<T>();
-            Transactor.GetWhereCondition(child, condition);
+            Transactor.ScalarWhereCondition(child, condition);
 
             return child;
+        }
+
+        public static List<T> GetWhereCondition<T>(string condition) where T : Model, new()
+        {     
+            return Transactor.GetWhereCondition<T>(condition);
         }
     }
 }

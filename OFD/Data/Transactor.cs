@@ -3,11 +3,12 @@ using Oracle.ManagedDataAccess.Client;
 using OFD.Properties;
 using OFD.Reflection;
 using OFD.Caching;
+using System.Collections.Generic;
 
 namespace OFD.Data
 {
     /// <summary>
-    /// This class exists only to persist and retreive model records. It serves as a buffer and depends on Reflector, Sniffer, and SQLBuilder.
+    /// This class exists only to persist and retrieve model records. It serves as a buffer and depends on Reflector, Sniffer, and SQLBuilder.
     /// </summary>
     public static class Transactor
     {
@@ -118,7 +119,7 @@ namespace OFD.Data
             if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved before update the record, otherwise insert a new one.
-                if (Sniffer.RecordExists(table, (int)Reflector.GetProperty(ref instance, "ID"), GetConnection()))
+                if (Sniffer.RecordExists(table, (int)Reflector.GetPropertyInstance(ref instance, "ID"), GetConnection()))
                 {
                     sql = SQLBuilder.GetUpdateStatement(table, Reflector.GetPersistenceDictionary(ref instance));
                 }
@@ -133,9 +134,9 @@ namespace OFD.Data
             {
                 if (Execute(sql))
                 {
-                    if ((int)Reflector.GetProperty(ref instance, "ID") == 0)
+                    if ((int)Reflector.GetPropertyInstance(ref instance, "ID") == 0)
                     {
-                        Reflector.SetProperty(ref instance, "ID", GetLastUpdatedId(table));
+                        Reflector.SetPropertyValue(ref instance, "ID", GetLastUpdatedId(table));
                     }
                 }
             }
@@ -146,7 +147,51 @@ namespace OFD.Data
 
         }
 
-        public static void GetWhereCondition(Model instance, string condition)
+        public static List<T> GetWhereCondition<T>(string condition) where T : Model, new()
+        {
+            List<T> collection = new List<T>();
+            Model instance = new T();
+
+            string table = Reflector.GetTableName(ref instance);
+            string sql = "SELECT * FROM " + table + " WHERE " + condition;
+
+            try
+            {
+                using (OracleConnection con = GetConnection())
+                {
+                    using (OracleCommand command = new OracleCommand(sql, con))
+                    {
+                        using (OracleDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    string name = reader.GetName(i).ToUpperInvariant();
+
+                                    if (Cache.Get(instance).IdentityCache.ContainsKey(name))
+                                    {
+                                        Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
+                                    }                         
+                                }
+
+                                collection.Add((T)instance.Clone());
+                            }
+                        }
+                    }
+
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format(Resources.NoFetchWhere, table, condition), ex);
+            }
+
+            return collection;
+        }
+
+        public static void ScalarWhereCondition(Model instance, string condition)
         {
             string table = Reflector.GetTableName(ref instance);
             string sql = "SELECT * FROM " + table + " WHERE " + condition;
@@ -167,9 +212,9 @@ namespace OFD.Data
 
                                     if (Cache.Get(instance).IdentityCache.ContainsKey(name))
                                     {
-                                        Reflector.SetProperty(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
+                                        Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
                                     }
-                                    
+
                                 }
                             }
                         }

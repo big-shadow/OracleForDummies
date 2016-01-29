@@ -66,7 +66,7 @@ namespace OFD.Reflection
 
             foreach (KeyValuePair<string, string> index in Cache.Get(instance).IdentityCache)
             {
-                object p = GetProperty(ref instance, index.Value);
+                object p = GetPropertyInstance(ref instance, index.Value);
 
                 if (p != null && !string.IsNullOrWhiteSpace(p.ToString()))
                 {
@@ -122,7 +122,7 @@ namespace OFD.Reflection
         }
 
         /// <summary>
-        /// Returns a list of properties of the supplied Model that are simple, scalar, types and in the Reflector.TypeMap.
+        /// Returns a list of properties of the supplied Model that are simple, scalar types, and in the Reflector.TypeMap.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
         public static List<PropertyInfo> GetWritableProperties(ref Model instance)
@@ -152,7 +152,7 @@ namespace OFD.Reflection
         /// Returns a property of the supplied instance.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static object GetProperty(ref Model instance, string name)
+        public static object GetPropertyInstance(ref Model instance, string name)
         {
             return instance.GetType().GetProperty(name).GetValue(instance, null);
         }
@@ -174,7 +174,7 @@ namespace OFD.Reflection
         /// <param name="instance">A Model with some scalar type properties.</param>
         /// <param name="name">The name of the property.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetProperty(ref Model instance, string name, object value)
+        public static void SetPropertyValue(ref Model instance, string name, object value)
         {
             try
             {

@@ -1,5 +1,6 @@
 ﻿using OFD;
 using OFD.Data;
+using System.Collections.Generic;
 
 namespace OFDTests
 {
@@ -50,7 +51,7 @@ namespace OFDTests
 
             tests.Add(new Test("Update Model", delegate
             {
-                Thing thing = new Thing(1);
+                Thing thing = new Thing();
 
                 for (int x = 1; x <= iterations; x++)
                 {
@@ -106,7 +107,7 @@ namespace OFDTests
 
                 for (int x = 1; x <= iterations; x++)
                 {
-                    thing = Thing.GetWhereID<Thing>(x);
+                    thing = Thing.ScalarWhereID<Thing>(x);
                 }
 
                 return thing.ID == iterations;
@@ -114,7 +115,7 @@ namespace OFDTests
 
             tests.Add(new Test("Static Fetch Where ID Type", delegate
             {
-                Thing thing = Thing.GetWhereID<Thing>(1);
+                Thing thing = Thing.ScalarWhereID<Thing>(1);
 
                 return thing.GetType().Equals(typeof(Thing));
             }));
@@ -125,24 +126,16 @@ namespace OFDTests
 
                 for (int x = 1; x <= iterations; x++)
                 {
-                    thing = Thing.GetWhereCondition<Thing>("Name = 'Ray" + " " + iterations + "'");
+                    thing = Thing.ScalarWhereCondition<Thing>("Name = 'Ray" + " " + iterations + "'");
                 }
 
                 return thing.ID == iterations;
             }));
 
-            tests.Add(new Test("Hash Long Identifier", delegate
-            {
-                string identifier = "This is most definitely longer than thirty characters.";
-                identifier = Hasher.Hash(identifier);
-
-                return identifier.Length <= 30;
-            }));
-
             tests.Add(new Test("Fetch Long Identifier", delegate
             {
                 Thing thing = new Thing(1);
-                thing.Name = "Joe";
+                thing.Name = "Ray";
                 thing.PropertyNameThatIsLongerThanThirtyCharacters = "This";
                 thing.Save();
 
@@ -150,6 +143,16 @@ namespace OFDTests
 
                 return thing.PropertyNameThatIsLongerThanThirtyCharacters.Equals("This");
             }));
+
+            tests.Add(new Test("Fetch List", delegate
+            {
+                List<Thing> collection = new List<Thing>();
+                collection = Thing.GetWhereCondition<Thing>("Name LIKE '%Ray%'");
+
+                return collection.Count == iterations;
+            }));
+
+
 
         }
     }
