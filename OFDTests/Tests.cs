@@ -24,55 +24,92 @@ namespace OFDTests
     {
         public static void MakeTests()
         {
-            tests.Add(new Test("Insert Model", delegate
+            const int iterations = 200;
+
+            tests.Add(new Test("Drop Model Table", delegate
             {
                 Thing thing = new Thing();
                 thing.Drop();
 
-                thing.Name = "Ray";
-                thing.Save();
+                return true;
+            }));
 
-                return thing.ID > 0;
+            tests.Add(new Test("Insert Model", delegate
+            {
+                Thing thing = new Thing();
+
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = new Thing();
+                    thing.Name = "Not Ray" + " " + x;
+                    thing.Save();
+                }
+
+                return thing.ID == iterations;
             }));
 
             tests.Add(new Test("Update Model", delegate
             {
                 Thing thing = new Thing(1);
-                thing.Name = "Joe";
-                thing.Save();
 
-                return thing.ID == 1;
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = new Thing(x);
+                    thing.Name = "Ray" + " " + x;
+                    thing.Save();
+                }
+
+                return thing.ID == iterations;
             }));
 
             tests.Add(new Test("Set Where ID", delegate
             {
                 Thing thing = new Thing();
-                thing.Name = "Not Joe";
-                thing.SetWhereID(1);
 
-                return thing.Name.Equals("Joe");
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = new Thing();
+                    thing.Name = "Not Joe";
+                    thing.SetWhereID(x);
+                }
+
+                return thing.Name.Equals("Ray" + " " + iterations);
             }));
 
             tests.Add(new Test("Constructor Set Where ID", delegate
             {
                 Thing thing = new Thing(1);
 
-                return thing.Name.Equals("Joe");
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = new Thing(x);
+                }
+
+                return thing.Name.Equals("Ray" + " " + iterations);
             }));
 
             tests.Add(new Test("Set Where Condition", delegate
             {
                 Thing thing = new Thing();
-                thing.SetWhereCondition("Name = 'Joe'");
 
-                return thing.Name.Equals("Joe");
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing.SetWhereCondition("Name = 'Ray" + " " + iterations + "'");
+                }
+
+                return thing.ID == iterations;
             }));
 
             tests.Add(new Test("Static Fetch Where ID Values", delegate
             {
-                Thing thing = Thing.GetWhereID<Thing>(1);
+                Thing thing = new Thing();
 
-                return thing.Name.Equals("Joe");
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = Thing.GetWhereID<Thing>(x);
+                }
+
+                return thing.ID == iterations;
             }));
 
             tests.Add(new Test("Static Fetch Where ID Type", delegate
@@ -84,9 +121,14 @@ namespace OFDTests
 
             tests.Add(new Test("Static Fetch Where Condition", delegate
             {
-                Thing thing = Thing.GetWhereCondition<Thing>("Name = 'Joe'");
+                Thing thing = new Thing();
 
-                return thing.Name.Equals("Joe");
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = Thing.GetWhereCondition<Thing>("Name = 'Ray" + " " + iterations + "'");
+                }
+
+                return thing.ID == iterations;
             }));
 
             tests.Add(new Test("Hash Long Identifier", delegate

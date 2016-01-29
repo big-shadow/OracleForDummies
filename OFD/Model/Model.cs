@@ -12,14 +12,10 @@ namespace OFD
     {
         // Properties.
         public int ID { get; set; }
-        public Cache Cache { get; set; }
 
         // Constructor.
         public Model(int id = 0)
         {
-            this.Cache = new Cache(); 
-            this.Cache.IdentityCache = Reflector.GetIdentityMap(this.GetType());
-
             if (id > 0)
             {
                 Transactor.GetWhereCondition(this, string.Format(Resources.WhereID, id));

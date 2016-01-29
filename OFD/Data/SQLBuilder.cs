@@ -29,8 +29,8 @@ namespace OFD.Data
                 delimiter = ", ";
             }
 
-            statement.AppendLine(", time_inserted DATE DEFAULT SYSDATE NOT NULL");
-            statement.AppendLine(", time_updated DATE DEFAULT SYSDATE NOT NULL");
+            statement.AppendLine(", time_inserted TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL");
+            statement.AppendLine(", time_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL");
             statement.AppendLine(")");
 
             return statement.ToString();
