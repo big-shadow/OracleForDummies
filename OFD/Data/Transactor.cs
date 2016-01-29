@@ -102,7 +102,7 @@ namespace OFD.Data
             {
                 try
                 {
-                    if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.GetColumnMap(ref instance))))
+                    if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.GetColumnDictionary(ref instance))))
                     {
                         Execute(Reflector.GetEmbeddedResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
                     }
@@ -120,11 +120,11 @@ namespace OFD.Data
                 // If it's been saved before update the record, otherwise insert a new one.
                 if (Sniffer.RecordExists(table, (int)Reflector.GetProperty(ref instance, "ID"), GetConnection()))
                 {
-                    sql = SQLBuilder.GetUpdateStatement(table, Reflector.GetPersistenceMap(ref instance));
+                    sql = SQLBuilder.GetUpdateStatement(table, Reflector.GetPersistenceDictionary(ref instance));
                 }
                 else
                 {
-                    sql = SQLBuilder.GetInsertStatement(table, Reflector.GetPersistenceMap(ref instance));
+                    sql = SQLBuilder.GetInsertStatement(table, Reflector.GetPersistenceDictionary(ref instance));
                 }
             }
 

@@ -50,7 +50,7 @@ namespace OFD.Caching
 
         public ModelCache(Type type)
         {
-            IdentityCache = Reflector.GetIdentityMap(type);
+            IdentityCache = Reflector.GetIdentityDictionary(type);
         }
     }
 }

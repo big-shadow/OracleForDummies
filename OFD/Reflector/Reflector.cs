@@ -42,7 +42,7 @@ namespace OFD.Reflection
         /// Returns a dictionary of column names, mapped to corresponding PL-SQL data types, for building DDL statements. 
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static Dictionary<string, string> GetColumnMap(ref Model instance)
+        public static Dictionary<string, string> GetColumnDictionary(ref Model instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -60,7 +60,7 @@ namespace OFD.Reflection
         /// Returns a dictionary of column names, mapped to corresponding values, for building CRUD/DML statements. 
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static Dictionary<string, string> GetPersistenceMap(ref Model instance)
+        public static Dictionary<string, string> GetPersistenceDictionary(ref Model instance)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -88,7 +88,7 @@ namespace OFD.Reflection
         /// Returns a dictionary that maps property names to their hashed PL-SQL identity counterparts.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static Dictionary<string, string> GetIdentityMap(Type type)
+        public static Dictionary<string, string> GetIdentityDictionary(Type type)
         {
             Model instance = (Model)FormatterServices.GetUninitializedObject(type);
 
