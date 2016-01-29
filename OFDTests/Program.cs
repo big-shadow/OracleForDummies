@@ -11,16 +11,31 @@ namespace OFDTests
         {
             MakeTests();
 
+            string result = string.Empty;
+
             foreach (Test test in tests)
             {
+                Timer timer = new Timer();
+                timer.Start();
+
                 if (test.RunTest())
                 {
-                    Console.WriteLine("[Yes]   " + test.Name);
+                    result = "[Yes]   ";
+                    Console.ForegroundColor = ConsoleColor.Green;
                 }
                 else
                 {
-                    Console.WriteLine("[No]    " + test.Name);
+                    result = "[No]    ";
+                    Console.ForegroundColor = ConsoleColor.Red;
                 }
+
+                timer.Stop();
+
+                Console.Write(Environment.NewLine + result);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(test.Name);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("        " + timer.Duration + " Second(s)");
             }
 
             Console.Read();
