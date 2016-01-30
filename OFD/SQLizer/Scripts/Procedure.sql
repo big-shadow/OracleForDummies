@@ -3,7 +3,7 @@
 	p_id number
 )
 AS
-	l_curs SYS_REFCURSOR
+	l_curs SYS_REFCURSOR;
 BEGIN
 
 OPEN l_curs FOR

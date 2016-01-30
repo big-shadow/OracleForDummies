@@ -2,6 +2,7 @@
 using OFD.Properties;
 using System.Collections.Generic;
 using System;
+using Oracle.ManagedDataAccess.Client;
 
 namespace OFD
 {
@@ -63,6 +64,14 @@ namespace OFD
         public static void DeleteWhere<T>(string condition) where T : Model, new()
         {
             Transactor.DeleteWhere<T>(condition);
+        }
+
+        public static T StoredProcedure<T>() where T : Model, new()
+        {
+            List<Parameter> parameters = new List<Parameter>();
+            parameters.Add(new Parameter("p_id", OracleDbType.Int16, 1));
+           
+            return Transactor.StoredProcedure<T>(parameters)[0];
         }
     }
 }

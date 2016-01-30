@@ -65,13 +65,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SQLizer\Scripts\UpdateTrigger.sql">
-      <CustomToolNamespace>OFD.Data</CustomToolNamespace>
-    </Content>
-    <Content Include="SQLizer\Scripts\DropTable.sql">
-      <CustomToolNamespace>OFD.Data</CustomToolNamespace>
-    </Content>
-    <Content Include="SQLizer\Scripts\Procedure.sql" />
+    <EmbeddedResource Include="SQLizer\Scripts\UpdateTrigger.sql" />
+    <EmbeddedResource Include="SQLizer\Scripts\DropTable.sql">
+      <CustomToolNamespace>OFD.SQLizer.Script</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SQLizer\Scripts\Procedure.sql" />
     <Content Include="TODO.txt" />
   </ItemGroup>
 </Project>

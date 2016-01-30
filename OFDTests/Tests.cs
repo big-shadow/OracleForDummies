@@ -166,6 +166,20 @@ namespace OFDTests
 
                 return Transactor.GetGeneric("count(*)", "thing")[0][0].ToString().Equals("0");
             }));
+
+
+            // Gets a model of the static caller's type from an implicit cursor returning stored procedure.
+            tests.Add(new Test("Select Stored Procedure", delegate
+            {
+                List<Thing> collection = new List<Thing>();
+
+                for (int x = 1; x <= iterations; x++)
+                {
+                    collection.Add(Thing.StoredProcedure<Thing>());
+                }
+
+                return collection.Count == iterations;           
+            }));
         }
     }
 }

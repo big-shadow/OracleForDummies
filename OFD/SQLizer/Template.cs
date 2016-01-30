@@ -9,8 +9,8 @@ namespace OFD.SQLize
         {
             string sql = Cache.GetResource("Procedure");
 
-            sql.Replace(Token.TABLE.ToString(), table);
-            sql.Replace(Token.PROCEDURE.ToString(), Hasher.Hash(string.Format(Resources.ProcName, table)));
+            sql = sql.Replace(Token.TABLE.ToString(), table);
+            sql = sql.Replace(Token.PROCEDURE.ToString(), Hasher.Hash(string.Format(Resources.ProcName, table)));
 
             return sql;
         }
@@ -19,7 +19,7 @@ namespace OFD.SQLize
         {
             string sql = Cache.GetResource("UpdateTrigger");
 
-            sql.Replace(Token.TABLE.ToString(), table);
+            sql = sql.Replace(Token.TABLE.ToString(), table);
 
             return sql;
         }
@@ -28,7 +28,7 @@ namespace OFD.SQLize
         {
             string sql = Cache.GetResource("DropTable");
 
-            sql.Replace(Token.TABLE.ToString(), table);
+            sql = sql.Replace(Token.TABLE.ToString(), table);
 
             return sql;
         }

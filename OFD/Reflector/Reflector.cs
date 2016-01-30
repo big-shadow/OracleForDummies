@@ -109,6 +109,7 @@ namespace OFD.Reflect
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
+                // OFD.SQLizer.Scripts.DropTable.sql
                 StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.SQLizer.Scripts." + name + ".sql"));
 
                 return reader.ReadToEnd();

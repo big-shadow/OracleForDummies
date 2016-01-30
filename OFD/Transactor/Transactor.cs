@@ -6,7 +6,6 @@ using OFD.Caching;
 using OFD.SQLize;
 using OFD.Reflect;
 using System.Data;
-using System.Reflection;
 
 namespace OFD.Transact
 {
@@ -314,17 +313,17 @@ namespace OFD.Transact
             }
         }
 
-        public static List<T> StoredProcedure<T>(string table, List<Parameter> parameters) where T : Model, new()
+        public static List<T> StoredProcedure<T>(List<Parameter> parameters) where T : Model, new()
         {
             List<T> collection = new List<T>();
             Model instance = new T();
 
-            using (OracleConnection cn = GetConnection())
+            using (OracleConnection con = GetConnection())
             {
-                using (OracleCommand command = new OracleCommand(null, cn))
+                using (OracleCommand command = new OracleCommand(null, con))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = Hasher.Hash(string.Format(Resources.ProcName, table));
+                    command.CommandText = Hasher.Hash(string.Format(Resources.ProcName, Cache.Get(typeof(T)).TableName));
 
                     foreach (Parameter p in parameters)
                     {
