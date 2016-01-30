@@ -150,7 +150,8 @@ namespace OFD.Transact
                 {
                     if (Execute(SQLizer.GetCreateTableStatement(table, Cache.Get(instance).ColumnDictionary)))
                     {
-                        Execute(Cache.GetResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
+                        Execute(Template.Trigger(table));
+                        Execute(Template.StoredProcedure(table));
                     }
                 }
                 catch (Exception ex)
@@ -289,7 +290,7 @@ namespace OFD.Transact
             {
                 if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
                 {
-                    Execute(Cache.GetResource("DropTable").Replace(TokenEnum.TABLE.ToString(), table));
+                    Execute(Template.Drop(table));
                 }
             }
             catch (Exception ex)
@@ -313,7 +314,7 @@ namespace OFD.Transact
             }
         }
 
-        public static List<T> StoredProcedure<T>(string procname, List<Parameter> parameters) where T : Model, new()
+        public static List<T> StoredProcedure<T>(string table, List<Parameter> parameters) where T : Model, new()
         {
             List<T> collection = new List<T>();
             Model instance = new T();
@@ -323,7 +324,7 @@ namespace OFD.Transact
                 using (OracleCommand command = new OracleCommand(null, cn))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = procname;
+                    command.CommandText = Hasher.Hash(string.Format(Resources.ProcName, table));
 
                     foreach (Parameter p in parameters)
                     {

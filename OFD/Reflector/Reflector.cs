@@ -109,7 +109,7 @@ namespace OFD.Reflect
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.SQLizer.Scripts." + name + ".txt"));
+                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.SQLizer.Scripts." + name + ".sql"));
 
                 return reader.ReadToEnd();
             }

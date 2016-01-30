@@ -151,6 +151,15 @@ namespace OFD.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}_procedure.
+        /// </summary>
+        internal static string ProcName {
+            get {
+                return ResourceManager.GetString("ProcName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ID = {0}.
         /// </summary>
         internal static string WhereID {
