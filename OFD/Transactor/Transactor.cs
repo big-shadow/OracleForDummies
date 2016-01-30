@@ -38,7 +38,7 @@ namespace OFD.Transact
             }
         }
 
-        private static bool Execute(string sql)
+        public static bool Execute(string sql)
         {
             bool result = true;
 
@@ -62,9 +62,51 @@ namespace OFD.Transact
             return result;
         }
 
-        private static int GetLastUpdatedId(string tablename)
+        public static List<List<object>> GetGeneric(string columns, string table, string condition = null)
         {
-            string sql = "SELECT MAX(ID)KEEP(DENSE_RANK LAST ORDER BY TIME_UPDATED) AS ID FROM " + tablename;
+            string sql = "SELECT " + columns + " FROM " + table;
+            List<List<object>> list = new List<List<object>>();
+
+            if (!string.IsNullOrWhiteSpace(condition))
+            {
+                sql += " WHERE " + condition;
+            }
+
+            using (OracleConnection con = GetConnection())
+            {
+                using (OracleCommand command = new OracleCommand(sql, con))
+                {
+                    using (OracleDataReader reader = command.ExecuteReader())
+                    {
+                        try
+                        {
+                            while (reader.Read())
+                            {
+                                list.Add(new List<object>());
+
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    list[i].Add(reader.GetValue(i));
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            reader.Close();
+                            throw new Exception(string.Format(Resources.NoFetchWhere, table, condition), ex);
+                        }
+                    }
+                }
+
+                con.Close();
+            }
+
+            return list;
+        }
+
+        private static int GetLastUpdatedId(string table)
+        {
+            string sql = "SELECT MAX(ID)KEEP(DENSE_RANK LAST ORDER BY TIME_UPDATED) AS ID FROM " + table;
             int val = -1;
 
             using (OracleConnection con = GetConnection())
@@ -83,7 +125,7 @@ namespace OFD.Transact
                         catch (Exception ex)
                         {
                             reader.Close();
-                            throw new Exception(string.Format(Resources.NoID, tablename), ex);
+                            throw new Exception(string.Format(Resources.NoID, table), ex);
                         }
                     }
                 }
@@ -148,7 +190,7 @@ namespace OFD.Transact
 
         }
 
-        public static List<T> GetWhereCondition<T>(string condition) where T : Model, new()
+        public static List<T> GetWhere<T>(string condition) where T : Model, new()
         {
             List<T> collection = new List<T>();
             Model instance = new T();
@@ -173,7 +215,7 @@ namespace OFD.Transact
                                     if (Cache.Get(instance).IdentityCache.ContainsKey(name))
                                     {
                                         Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
-                                    }                         
+                                    }
                                 }
 
                                 collection.Add((T)instance.Clone());
@@ -192,15 +234,15 @@ namespace OFD.Transact
             return collection;
         }
 
-        public static T ScalarWhereCondition<T>(string condition) where T : Model, new()
+        public static T GetScalarWhere<T>(string condition) where T : Model, new()
         {
             T child = Reflector.GetUninitializedObject<T>();
-            ScalarWhereCondition(child, condition);
+            SetScalarWhere(child, condition);
 
             return child;
         }
 
-        public static void ScalarWhereCondition(Model instance, string condition)
+        public static void SetScalarWhere(Model instance, string condition)
         {
             string table = Cache.Get(instance).TableName;
             string sql = "SELECT * FROM " + table + " WHERE " + condition;
@@ -223,7 +265,6 @@ namespace OFD.Transact
                                     {
                                         Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
                                     }
-
                                 }
                             }
                         }
@@ -252,6 +293,21 @@ namespace OFD.Transact
             catch (Exception ex)
             {
                 throw new Exception(string.Format(Resources.NoDrop, table), ex);
+            }
+        }
+
+        public static void DeleteWhere<T>(string condition)
+        {
+            string table = Cache.Get(typeof(T)).TableName;
+            string sql = "DELETE FROM " + table + " WHERE " + condition;
+
+            try
+            {
+                Execute(sql);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format(Resources.NoDelete, table, condition), ex);
             }
         }
     }

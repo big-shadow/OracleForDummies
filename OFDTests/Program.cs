@@ -39,6 +39,7 @@ namespace OFDTests
             }
 
             Console.Read();
+            Environment.Exit(0);
         }
     }
 

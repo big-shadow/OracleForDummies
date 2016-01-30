@@ -8,7 +8,7 @@ namespace OFD
     /// <summary>
     /// This class is to be inherited for simple Oracle persistence provided by the OracleForDummies library. 
     /// </summary>
-    public abstract class Model : IModel, ICloneable
+    public abstract class Model : ICloneable
     {
         // Properties.
         public int ID { get; set; }
@@ -18,7 +18,7 @@ namespace OFD
         {
             if (id > 0)
             {
-                Transactor.ScalarWhereCondition(this, string.Format(Resources.WhereID, id));
+                Transactor.SetScalarWhere(this, string.Format(Resources.WhereID, id));
             }
         }
 
@@ -36,33 +36,33 @@ namespace OFD
 
         public virtual void SetWhereID(int id)
         {
-            Transactor.ScalarWhereCondition(this, string.Format(Resources.WhereID, id));
+            Transactor.SetScalarWhere(this, string.Format(Resources.WhereID, id));
         }
 
-        public virtual void SetWhereCondition(string condition)
+        public virtual void SetWhere(string condition)
         {
-            Transactor.ScalarWhereCondition(this, condition);
-        }
-
-        public virtual void Drop()
-        {
-            Transactor.Drop(GetType());
+            Transactor.SetScalarWhere(this, condition);
         }
 
         // Static members.
         public static T ScalarWhereID<T>(int id) where T : Model, new()
         {
-            return Transactor.ScalarWhereCondition<T>(string.Format(Resources.WhereID, id));
+            return Transactor.GetScalarWhere<T>(string.Format(Resources.WhereID, id));
         }
 
-        public static T ScalarWhereCondition<T>(string condition) where T : Model, new()
+        public static T ScalarWhere<T>(string condition) where T : Model, new()
         {
-            return Transactor.ScalarWhereCondition<T>(condition);
+            return Transactor.GetScalarWhere<T>(condition);
         }
 
-        public static List<T> GetWhereCondition<T>(string condition) where T : Model, new()
+        public static List<T> GetWhere<T>(string condition) where T : Model, new()
         {
-            return Transactor.GetWhereCondition<T>(condition);
+            return Transactor.GetWhere<T>(condition);
+        }
+
+        public static void DeleteWhere<T>(string condition) where T : Model, new()
+        {
+            Transactor.DeleteWhere<T>(condition);
         }
     }
 }

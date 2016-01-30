@@ -70,6 +70,15 @@ namespace OFD.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete {0} where {1}..
+        /// </summary>
+        internal static string NoDelete {
+            get {
+                return ResourceManager.GetString("NoDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to drop {0}. It still exists..
         /// </summary>
         internal static string NoDrop {

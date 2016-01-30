@@ -41,7 +41,6 @@
     <Compile Include="Transactor\Sniffer.cs" />
     <Compile Include="SQLizer\TokenEnum.cs" />
     <Compile Include="Model\Cache.cs" />
-    <Compile Include="Model\IModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

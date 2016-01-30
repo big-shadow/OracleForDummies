@@ -1,5 +1,6 @@
-﻿using OFD;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using OFD;
+using OFD.Transact;
 
 namespace OFDTests
 {
@@ -24,12 +25,11 @@ namespace OFDTests
     {
         public static void MakeTests()
         {
-            const int iterations = 200;
+            const int iterations = 1000;
 
             tests.Add(new Test("Drop Model Table", delegate
             {
-                Thing thing = new Thing();
-                thing.Drop();
+                Transactor.Drop(typeof(Thing));
 
                 return true;
             }));
@@ -88,19 +88,19 @@ namespace OFDTests
                 return thing.Name.Equals("Ray" + " " + iterations);
             }));
 
-            tests.Add(new Test("Set Where Condition", delegate
+            tests.Add(new Test("Set Where", delegate
             {
                 Thing thing = new Thing();
 
                 for (int x = 1; x <= iterations; x++)
                 {
-                    thing.SetWhereCondition("Name = 'Ray" + " " + iterations + "'");
+                    thing.SetWhere("Name = 'Ray" + " " + iterations + "'");
                 }
 
                 return thing.ID == iterations;
             }));
 
-            tests.Add(new Test("Static Scalar Where ID Values", delegate
+            tests.Add(new Test("Static Scalar Where ID Value", delegate
             {
                 Thing thing = new Thing();
 
@@ -119,13 +119,13 @@ namespace OFDTests
                 return thing.GetType().Equals(typeof(Thing));
             }));
 
-            tests.Add(new Test("Static Scalar Where Condition", delegate
+            tests.Add(new Test("Static Scalar Where", delegate
             {
                 Thing thing = new Thing();
 
                 for (int x = 1; x <= iterations; x++)
                 {
-                    thing = Thing.ScalarWhereCondition<Thing>("Name = 'Ray" + " " + iterations + "'");
+                    thing = Thing.ScalarWhere<Thing>("Name = 'Ray" + " " + iterations + "'");
                 }
 
                 return thing.ID == iterations;
@@ -146,13 +146,17 @@ namespace OFDTests
             tests.Add(new Test("Static Get Collection", delegate
             {
                 List<Thing> collection = new List<Thing>();
-                collection = Thing.GetWhereCondition<Thing>("Name LIKE '%Ray%'");
+                collection = Thing.GetWhere<Thing>("Name LIKE '%Ray%'");
 
                 return collection.Count == iterations;
             }));
 
+            tests.Add(new Test("Static Delete Where", delegate
+            {
+                Thing.DeleteWhere<Thing>("Name LIKE '%Ray%'");
 
-
+                return Transactor.GetGeneric("count(*)", "thing")[0][0].ToString().Equals("0");
+            }));
         }
     }
 }
