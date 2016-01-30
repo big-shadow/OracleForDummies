@@ -27,6 +27,7 @@ namespace OFDTests
         {
             const int iterations = 1000;
 
+            // Drops the table.
             tests.Add(new Test("Drop Model Table", delegate
             {
                 Transactor.Drop(typeof(Thing));
@@ -34,6 +35,7 @@ namespace OFDTests
                 return true;
             }));
 
+            // Inserts Models.
             tests.Add(new Test("Insert Model", delegate
             {
                 Thing thing = new Thing();
@@ -48,6 +50,7 @@ namespace OFDTests
                 return thing.ID == iterations;
             }));
 
+            // Updates Models.
             tests.Add(new Test("Update Model", delegate
             {
                 Thing thing = new Thing();
@@ -62,6 +65,7 @@ namespace OFDTests
                 return thing.ID == iterations;
             }));
 
+            // Sets an object using an ID.
             tests.Add(new Test("Set Where ID", delegate
             {
                 Thing thing = new Thing();
@@ -76,6 +80,7 @@ namespace OFDTests
                 return thing.Name.Equals("Ray" + " " + iterations);
             }));
 
+            // Sets an object using a constructor argument.
             tests.Add(new Test("Constructor Set Where ID", delegate
             {
                 Thing thing = new Thing(1);
@@ -88,6 +93,7 @@ namespace OFDTests
                 return thing.Name.Equals("Ray" + " " + iterations);
             }));
 
+            // Sets an object using a developer-defined query condition.
             tests.Add(new Test("Set Where", delegate
             {
                 Thing thing = new Thing();
@@ -100,37 +106,7 @@ namespace OFDTests
                 return thing.ID == iterations;
             }));
 
-            tests.Add(new Test("Static Scalar Where ID Value", delegate
-            {
-                Thing thing = new Thing();
-
-                for (int x = 1; x <= iterations; x++)
-                {
-                    thing = Thing.ScalarWhereID<Thing>(x);
-                }
-
-                return thing.ID == iterations;
-            }));
-
-            tests.Add(new Test("Static Scalar Where ID Type", delegate
-            {
-                Thing thing = Thing.ScalarWhereID<Thing>(1);
-
-                return thing.GetType().Equals(typeof(Thing));
-            }));
-
-            tests.Add(new Test("Static Scalar Where", delegate
-            {
-                Thing thing = new Thing();
-
-                for (int x = 1; x <= iterations; x++)
-                {
-                    thing = Thing.ScalarWhere<Thing>("Name = 'Ray" + " " + iterations + "'");
-                }
-
-                return thing.ID == iterations;
-            }));
-
+            // Tests the reading and writing of properties with very long names.
             tests.Add(new Test("Scalar Long Identifier", delegate
             {
                 Thing thing = new Thing(1);
@@ -143,14 +119,47 @@ namespace OFDTests
                 return thing.PropertyNameThatIsLongerThanThirtyCharacters.Equals("This");
             }));
 
-            tests.Add(new Test("Static Get Collection", delegate
+            // Tests the correct values are assigned to a property returned by a static call.
+            tests.Add(new Test("Static Scalar Where ID Value", delegate
             {
-                List<Thing> collection = new List<Thing>();
-                collection = Thing.GetWhere<Thing>("Name LIKE '%Ray%'");
+                Thing thing = new Thing();
 
-                return collection.Count == iterations;
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = Thing.ScalarWhereID<Thing>(x);
+                }
+
+                return thing.ID == iterations;
             }));
 
+            // Tests the instance type returned by a static call.
+            tests.Add(new Test("Static Scalar Where ID Type", delegate
+            {
+                Thing thing = Thing.ScalarWhereID<Thing>(1);
+
+                return thing.GetType().Equals(typeof(Thing));
+            }));
+
+            // Gets an instance statically with query conditions.
+            tests.Add(new Test("Static Scalar Where", delegate
+            {
+                Thing thing = new Thing();
+
+                for (int x = 1; x <= iterations; x++)
+                {
+                    thing = Thing.ScalarWhere<Thing>("Name = 'Ray" + " " + iterations + "'");
+                }
+
+                return thing.ID == iterations;
+            }));
+
+            // Gets a collection of the static caller's type with query conditions.
+            tests.Add(new Test("Static Get Collection", delegate
+            {
+                return Thing.GetWhere<Thing>("Name LIKE '%Ray%'").Count == iterations;
+            }));
+
+            // Deletes records according to conditions.
             tests.Add(new Test("Static Delete Where", delegate
             {
                 Thing.DeleteWhere<Thing>("Name LIKE '%Ray%'");
