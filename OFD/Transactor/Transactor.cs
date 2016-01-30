@@ -5,6 +5,8 @@ using OFD.Properties;
 using OFD.Caching;
 using OFD.SQLize;
 using OFD.Reflect;
+using System.Data;
+using System.Reflection;
 
 namespace OFD.Transact
 {
@@ -296,7 +298,7 @@ namespace OFD.Transact
             }
         }
 
-        public static void DeleteWhere<T>(string condition)
+        public static void DeleteWhere<T>(string condition) where T : Model, new()
         {
             string table = Cache.Get(typeof(T)).TableName;
             string sql = "DELETE FROM " + table + " WHERE " + condition;
@@ -310,6 +312,63 @@ namespace OFD.Transact
                 throw new Exception(string.Format(Resources.NoDelete, table, condition), ex);
             }
         }
+
+        public static List<T> StoredProcedure<T>(string procname, List<Parameter> parameters) where T : Model, new()
+        {
+            List<T> collection = new List<T>();
+            Model instance = new T();
+
+            using (OracleConnection cn = GetConnection())
+            {
+                using (OracleCommand command = new OracleCommand(null, cn))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = procname;
+
+                    foreach (Parameter p in parameters)
+                    {
+                        command.Parameters.Add(p.Name, p.Type).Value = p.Value;
+                    }
+
+                    using (OracleDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                string name = reader.GetName(i).ToUpperInvariant();
+
+                                if (Cache.Get(typeof(T)).IdentityCache.ContainsKey(name))
+                                {
+                                    Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
+                                }
+                            }
+
+                            collection.Add((T)instance.Clone());
+                        }
+                    }
+                }
+            }
+
+            return collection;
+        }
     }
 }
 
+public struct Parameter
+{
+    public Parameter(string name, OracleDbType type, object value)
+    {
+        Name = name;
+        Type = type;
+        Value = value;
+    }
+    public string Name { get; set; }
+    public OracleDbType Type { get; set; }
+    public object Value { get; set; }
+}
+
+public static class Helper
+{
+
+}
