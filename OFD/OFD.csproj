@@ -37,9 +37,9 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Hasher.cs" />
-    <Compile Include="Data\Sniffer.cs" />
-    <Compile Include="Data\TokenEnum.cs" />
+    <Compile Include="Hasher\Hasher.cs" />
+    <Compile Include="Transactor\Sniffer.cs" />
+    <Compile Include="SQLizer\TokenEnum.cs" />
     <Compile Include="Model\Cache.cs" />
     <Compile Include="Model\IModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,8 +50,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Reflector\Reflector.cs" />
-    <Compile Include="Data\SQLBuilder.cs" />
-    <Compile Include="Data\Transactor.cs" />
+    <Compile Include="SQLizer\SQLizer.cs" />
+    <Compile Include="Transactor\Transactor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -65,10 +65,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Scripts\UpdateTrigger.txt">
+    <EmbeddedResource Include="SQLizer\Scripts\UpdateTrigger.txt">
       <CustomToolNamespace>OFD.Data</CustomToolNamespace>
     </EmbeddedResource>
-    <EmbeddedResource Include="Data\Scripts\DropTable.txt">
+    <EmbeddedResource Include="SQLizer\Scripts\DropTable.txt">
       <CustomToolNamespace>OFD.Data</CustomToolNamespace>
     </EmbeddedResource>
     <Content Include="TODO.txt" />

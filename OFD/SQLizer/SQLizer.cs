@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace OFD.Data
+namespace OFD.SQLize
 {
     /// <summary>
     /// This class builds both DDL and DML statements in the PL-SQL programming language using common conventions. 
     /// </summary>
-    public static class SQLBuilder
+    public static class SQLizer
     {
         public static string GetCreateTableStatement(string tablename, Dictionary<string, string> columns)
         {

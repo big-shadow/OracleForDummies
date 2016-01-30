@@ -1,6 +1,4 @@
-﻿using OFD.Data;
-using OFD.Caching;
-using OFD.Reflection;
+﻿using OFD.Transact;
 using OFD.Properties;
 using System.Collections.Generic;
 using System;
@@ -48,28 +46,22 @@ namespace OFD
 
         public virtual void Drop()
         {
-            Transactor.Drop(this);
+            Transactor.Drop(GetType());
         }
 
         // Static members.
         public static T ScalarWhereID<T>(int id) where T : Model, new()
         {
-            T child = Reflector.GetUninitializedObject<T>();
-            Transactor.ScalarWhereCondition(child, string.Format(Resources.WhereID, id));
-
-            return child;
+            return Transactor.ScalarWhereCondition<T>(string.Format(Resources.WhereID, id));
         }
 
         public static T ScalarWhereCondition<T>(string condition) where T : Model, new()
         {
-            T child = Reflector.GetUninitializedObject<T>();
-            Transactor.ScalarWhereCondition(child, condition);
-
-            return child;
+            return Transactor.ScalarWhereCondition<T>(condition);
         }
 
         public static List<T> GetWhereCondition<T>(string condition) where T : Model, new()
-        {     
+        {
             return Transactor.GetWhereCondition<T>(condition);
         }
     }

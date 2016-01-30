@@ -2,7 +2,7 @@
 using Oracle.ManagedDataAccess.Client;
 using OFD.Properties;
 
-namespace OFD.Data
+namespace OFD.Transact
 {
     /// <summary>
     /// This class contains only boolean members. It exists only to make database related assertions. 
@@ -10,7 +10,7 @@ namespace OFD.Data
     public static class Sniffer
     {
         /// <summary>
-        /// Set this to false when in a production enviroment for performance boosts.
+        /// Set this to false when in a production environment for performance boosts.
         /// </summary>
         public const bool ON = true;
 

@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using OFD.Properties;
 using OFD.Caching;
 
-namespace OFD.Reflection
+namespace OFD.Reflect
 {
     /// <summary>
     /// This class converts A Model instances' class name and properties into meaningful Oracle parameters and tokens.
@@ -33,24 +33,24 @@ namespace OFD.Reflection
         /// Returns the lowercase invariant name of the supplied instance type.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static string GetTableName(ref Model instance)
+        public static string GetTableName(Type type)
         {
-            return Hasher.Hash(instance.GetType().Name);
+            return Hasher.Hash(type.Name);
         }
 
         /// <summary>
         /// Returns a dictionary of column names, mapped to corresponding PL-SQL data types, for building DDL statements. 
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static Dictionary<string, string> GetColumnDictionary(ref Model instance)
+        public static Dictionary<string, string> GetColumnDictionary(Type type)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            foreach (KeyValuePair<string, string> index in Cache.Get(instance).IdentityCache)
+            foreach (KeyValuePair<string, string> index in GetIdentityDictionary(type))
             {
-                Type type = GetPropertyType(ref instance, index.Value);
+                Type pType = GetPropertyType(type, index.Value);
 
-                dic.Add(index.Key, TypeMap[type]);
+                dic.Add(index.Key, TypeMap[pType]);
             }
 
             return dic;
@@ -90,11 +90,9 @@ namespace OFD.Reflection
         /// <param name="instance">A Model with some scalar type properties.</param>
         public static Dictionary<string, string> GetIdentityDictionary(Type type)
         {
-            Model instance = (Model)FormatterServices.GetUninitializedObject(type);
-
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
-            foreach (var p in GetWritableProperties(ref instance))
+            foreach (var p in GetWritableProperties(type))
             {
                 dic.Add(Hasher.Hash(p.Name), p.Name);
             }
@@ -103,7 +101,7 @@ namespace OFD.Reflection
         }
 
         /// <summary>
-        /// Returns an embedded text file resource located in the OFD.Data.Scripts namespace.
+        /// Returns an embedded text file resource located in the OFD.SQLizer.Scripts namespace.
         /// </summary>
         /// <param name="name">The name of an embedded text file resource.</param>
         public static string GetEmbeddedResource(string name)
@@ -111,7 +109,7 @@ namespace OFD.Reflection
             try
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.Data.Scripts." + name + ".txt"));
+                StreamReader reader = new StreamReader(assembly.GetManifestResourceStream("OFD.SQLizer.Scripts." + name + ".txt"));
 
                 return reader.ReadToEnd();
             }
@@ -125,11 +123,11 @@ namespace OFD.Reflection
         /// Returns a list of properties of the supplied Model that are simple, scalar types, and in the Reflector.TypeMap.
         /// </summary>
         /// <param name="instance">A Model with some scalar type properties.</param>
-        public static List<PropertyInfo> GetWritableProperties(ref Model instance)
+        public static List<PropertyInfo> GetWritableProperties(Type type)
         {
             List<PropertyInfo> writable = new List<PropertyInfo>();
 
-            var propertyInfos = instance.GetType().GetProperties(
+            var propertyInfos = type.GetProperties(
                 BindingFlags.Public
                 | BindingFlags.NonPublic
                 | BindingFlags.Static
@@ -163,9 +161,9 @@ namespace OFD.Reflection
         /// <param name="instance">A Model the owns the property.</param>
         /// <param name="name">The property name.</param>
         /// <returns></returns>
-        public static Type GetPropertyType(ref Model instance, string name)
+        public static Type GetPropertyType(Type type, string name)
         {
-            return instance.GetType().GetProperty(name).PropertyType;
+            return type.GetProperty(name).PropertyType;
         }
 
         /// <summary>

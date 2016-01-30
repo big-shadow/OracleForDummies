@@ -1,11 +1,12 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
-using OFD.Properties;
-using OFD.Reflection;
-using OFD.Caching;
 using System.Collections.Generic;
+using OFD.Properties;
+using OFD.Caching;
+using OFD.SQLize;
+using OFD.Reflect;
 
-namespace OFD.Data
+namespace OFD.Transact
 {
     /// <summary>
     /// This class exists only to persist and retrieve model records. It serves as a buffer and depends on Reflector, Sniffer, and SQLBuilder.
@@ -95,7 +96,7 @@ namespace OFD.Data
 
         public static void Persist(Model instance)
         {
-            string table = Reflector.GetTableName(ref instance);
+            string table = Cache.Get(instance).TableName;
             string sql = string.Empty;
 
             // Prepare a create table statement if the table doesn't exist. Then make a trigger to write to it after updates.
@@ -103,9 +104,9 @@ namespace OFD.Data
             {
                 try
                 {
-                    if (Execute(SQLBuilder.GetCreateTableStatement(table, Reflector.GetColumnDictionary(ref instance))))
+                    if (Execute(SQLizer.GetCreateTableStatement(table, Cache.Get(instance).ColumnDictionary)))
                     {
-                        Execute(Reflector.GetEmbeddedResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
+                        Execute(Cache.GetResource("UpdateTrigger").Replace(TokenEnum.TABLE.ToString(), table));
                     }
                 }
                 catch (Exception ex)
@@ -119,13 +120,13 @@ namespace OFD.Data
             if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved before update the record, otherwise insert a new one.
-                if (Sniffer.RecordExists(table, (int)Reflector.GetPropertyInstance(ref instance, "ID"), GetConnection()))
+                if (Sniffer.RecordExists(table, instance.ID, GetConnection()))
                 {
-                    sql = SQLBuilder.GetUpdateStatement(table, Reflector.GetPersistenceDictionary(ref instance));
+                    sql = SQLizer.GetUpdateStatement(table, Reflector.GetPersistenceDictionary(ref instance));
                 }
                 else
                 {
-                    sql = SQLBuilder.GetInsertStatement(table, Reflector.GetPersistenceDictionary(ref instance));
+                    sql = SQLizer.GetInsertStatement(table, Reflector.GetPersistenceDictionary(ref instance));
                 }
             }
 
@@ -134,9 +135,9 @@ namespace OFD.Data
             {
                 if (Execute(sql))
                 {
-                    if ((int)Reflector.GetPropertyInstance(ref instance, "ID") == 0)
+                    if (instance.ID == 0)
                     {
-                        Reflector.SetPropertyValue(ref instance, "ID", GetLastUpdatedId(table));
+                        instance.ID = GetLastUpdatedId(table);
                     }
                 }
             }
@@ -152,7 +153,7 @@ namespace OFD.Data
             List<T> collection = new List<T>();
             Model instance = new T();
 
-            string table = Reflector.GetTableName(ref instance);
+            string table = Cache.Get(instance).TableName;
             string sql = "SELECT * FROM " + table + " WHERE " + condition;
 
             try
@@ -191,9 +192,17 @@ namespace OFD.Data
             return collection;
         }
 
+        public static T ScalarWhereCondition<T>(string condition) where T : Model, new()
+        {
+            T child = Reflector.GetUninitializedObject<T>();
+            ScalarWhereCondition(child, condition);
+
+            return child;
+        }
+
         public static void ScalarWhereCondition(Model instance, string condition)
         {
-            string table = Reflector.GetTableName(ref instance);
+            string table = Cache.Get(instance).TableName;
             string sql = "SELECT * FROM " + table + " WHERE " + condition;
 
             try
@@ -229,15 +238,15 @@ namespace OFD.Data
             }
         }
 
-        public static void Drop(Model instance)
+        public static void Drop(Type type)
         {
-            string table = Reflector.GetTableName(ref instance);
+            string table = Cache.Get(type).TableName;
 
             try
             {
                 if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
                 {
-                    Execute(Reflector.GetEmbeddedResource("DropTable").Replace(TokenEnum.TABLE.ToString(), table));
+                    Execute(Cache.GetResource("DropTable").Replace(TokenEnum.TABLE.ToString(), table));
                 }
             }
             catch (Exception ex)

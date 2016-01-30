@@ -1,4 +1,4 @@
-﻿namespace OFD.Data
+﻿namespace OFD.SQLize
 {
     public sealed class TokenEnum
     {

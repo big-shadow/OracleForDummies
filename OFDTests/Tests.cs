@@ -1,5 +1,4 @@
 ﻿using OFD;
-using OFD.Data;
 using System.Collections.Generic;
 
 namespace OFDTests
@@ -101,7 +100,7 @@ namespace OFDTests
                 return thing.ID == iterations;
             }));
 
-            tests.Add(new Test("Static Fetch Where ID Values", delegate
+            tests.Add(new Test("Static Scalar Where ID Values", delegate
             {
                 Thing thing = new Thing();
 
@@ -113,14 +112,14 @@ namespace OFDTests
                 return thing.ID == iterations;
             }));
 
-            tests.Add(new Test("Static Fetch Where ID Type", delegate
+            tests.Add(new Test("Static Scalar Where ID Type", delegate
             {
                 Thing thing = Thing.ScalarWhereID<Thing>(1);
 
                 return thing.GetType().Equals(typeof(Thing));
             }));
 
-            tests.Add(new Test("Static Fetch Where Condition", delegate
+            tests.Add(new Test("Static Scalar Where Condition", delegate
             {
                 Thing thing = new Thing();
 
@@ -132,7 +131,7 @@ namespace OFDTests
                 return thing.ID == iterations;
             }));
 
-            tests.Add(new Test("Fetch Long Identifier", delegate
+            tests.Add(new Test("Scalar Long Identifier", delegate
             {
                 Thing thing = new Thing(1);
                 thing.Name = "Ray";
@@ -144,7 +143,7 @@ namespace OFDTests
                 return thing.PropertyNameThatIsLongerThanThirtyCharacters.Equals("This");
             }));
 
-            tests.Add(new Test("Fetch List", delegate
+            tests.Add(new Test("Static Get Collection", delegate
             {
                 List<Thing> collection = new List<Thing>();
                 collection = Thing.GetWhereCondition<Thing>("Name LIKE '%Ray%'");
