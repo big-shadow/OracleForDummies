@@ -25,7 +25,7 @@ namespace OFDTests
     {
         public static void MakeTests()
         {
-            const int iterations = 1000;
+            const int iterations = 100;
 
             // Drops the table.
             tests.Add(new Test("Drop Model Table", delegate
@@ -159,26 +159,41 @@ namespace OFDTests
                 return Thing.GetWhere<Thing>("Name LIKE '%Ray%'").Count == iterations;
             }));
 
+            // Gets an instance statically with a stored procedure.
+            tests.Add(new Test("Procedure Scalar", delegate
+            {
+                List<Thing> list = new List<Thing>();
+
+                for (int x = 1; x <= iterations; x++)
+                {
+                    List<Parameter> parameters = new List<Parameter>();
+                    parameters.Add(new Parameter("p_id", typeof(int), x));
+
+                    List<Thing> tmp = Thing.StoredProcedure<Thing>("THING_PROCEDURE", parameters);
+
+                    if(tmp.Count > 0)
+                    {
+                        list.AddRange(tmp);
+                    }
+                }
+
+                return list.Count == iterations;
+            }));
+
+            // Gets a list of the static caller's type from an implicit cursor returning stored procedure.
+            tests.Add(new Test("Procedure Get Collection", delegate
+            {
+                List<Parameter> parameters = new List<Parameter>();
+
+                return Thing.StoredProcedure<Thing>("THING_PROCEDURE", parameters).Count == iterations;
+            }));
+
             // Deletes records according to conditions.
             tests.Add(new Test("Static Delete Where", delegate
             {
                 Thing.DeleteWhere<Thing>("Name LIKE '%Ray%'");
 
                 return Transactor.GetGeneric("count(*)", "thing")[0][0].ToString().Equals("0");
-            }));
-
-
-            // Gets a model of the static caller's type from an implicit cursor returning stored procedure.
-            tests.Add(new Test("Select Stored Procedure", delegate
-            {
-                List<Thing> collection = new List<Thing>();
-
-                for (int x = 1; x <= iterations; x++)
-                {
-                    collection.Add(Thing.StoredProcedure<Thing>());
-                }
-
-                return collection.Count == iterations;           
             }));
         }
     }

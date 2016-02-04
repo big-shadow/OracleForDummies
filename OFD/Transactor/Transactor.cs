@@ -1,5 +1,5 @@
 ﻿using System;
-using Oracle.ManagedDataAccess.Client;
+using Oracle.DataAccess.Client;
 using System.Collections.Generic;
 using OFD.Properties;
 using OFD.Caching;
@@ -157,11 +157,10 @@ namespace OFD.Transact
                 {
                     throw new Exception(string.Format(Resources.NoTable, table), ex);
                 }
-
             }
 
             // If the table exists or was created successfully, check to see if it has already been saved once before.
-            if (Sniffer.ON && Sniffer.TableExists(table, GetConnection()))
+            if (Sniffer.TableExists(table, GetConnection()))
             {
                 // If it's been saved before update the record, otherwise insert a new one.
                 if (Sniffer.RecordExists(table, instance.ID, GetConnection()))
@@ -189,7 +188,6 @@ namespace OFD.Transact
             {
                 throw new Exception(string.Format(Resources.NoInsert, table), ex);
             }
-
         }
 
         public static List<T> GetWhere<T>(string condition) where T : Model, new()
@@ -313,7 +311,7 @@ namespace OFD.Transact
             }
         }
 
-        public static List<T> StoredProcedure<T>(List<Parameter> parameters) where T : Model, new()
+        public static List<T> StoredProcedure<T>(string name, List<Parameter> parameters) where T : Model, new()
         {
             List<T> collection = new List<T>();
             Model instance = new T();
@@ -323,7 +321,7 @@ namespace OFD.Transact
                 using (OracleCommand command = new OracleCommand(null, con))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = Hasher.Hash(string.Format(Resources.ProcName, Cache.Get(typeof(T)).TableName));
+                    command.CommandText = name;
 
                     foreach (Parameter p in parameters)
                     {
@@ -332,20 +330,23 @@ namespace OFD.Transact
 
                     using (OracleDataReader reader = command.ExecuteReader())
                     {
-                        while (reader.Read())
+                        do
                         {
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            while (reader.Read())
                             {
-                                string name = reader.GetName(i).ToUpperInvariant();
-
-                                if (Cache.Get(typeof(T)).IdentityCache.ContainsKey(name))
+                                for (int i = 0; i < reader.FieldCount; i++)
                                 {
-                                    Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[name], reader[name]);
-                                }
-                            }
+                                    string n = reader.GetName(i).ToUpperInvariant();
 
-                            collection.Add((T)instance.Clone());
-                        }
+                                    if (Cache.Get(typeof(T)).IdentityCache.ContainsKey(n))
+                                    {
+                                        Reflector.SetPropertyValue(ref instance, Cache.Get(instance).IdentityCache[n], reader[n]);
+                                    }
+                                }
+
+                                collection.Add((T)instance.Clone());
+                            }
+                        } while (reader.NextResult());
                     }
                 }
             }
@@ -353,22 +354,4 @@ namespace OFD.Transact
             return collection;
         }
     }
-}
-
-public struct Parameter
-{
-    public Parameter(string name, OracleDbType type, object value)
-    {
-        Name = name;
-        Type = type;
-        Value = value;
-    }
-    public string Name { get; set; }
-    public OracleDbType Type { get; set; }
-    public object Value { get; set; }
-}
-
-public static class Helper
-{
-
 }

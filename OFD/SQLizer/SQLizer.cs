@@ -15,15 +15,13 @@ namespace OFD.SQLize
 
             foreach (KeyValuePair<string, string> column in columns)
             {
-                string identifier = column.Key;
-
                 if (column.Key.Equals("ID"))
                 {
-                    statement.AppendLine(delimiter + identifier + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL");
+                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL");
                 }
                 else
                 {
-                    statement.AppendLine(delimiter + identifier + ' ' + column.Value);
+                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value);
                 }
 
                 delimiter = ", ";
@@ -50,9 +48,8 @@ namespace OFD.SQLize
                 {
                     continue;
                 }
-                string identifier = column.Key;
 
-                statement.Append(delimiter + identifier);
+                statement.Append(delimiter + column.Key);
                 values.Append(delimiter + column.Value);
 
                 delimiter = ", ";
@@ -77,9 +74,7 @@ namespace OFD.SQLize
                     continue;
                 }
 
-                string identifier = column.Key;
-
-                statement.Append(delimiter + identifier + " = " + column.Value);
+                statement.Append(delimiter + column.Key + " = " + column.Value);
                 delimiter = ", ";
             }
 
