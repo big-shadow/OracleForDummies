@@ -212,7 +212,6 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Filters\" />
     <Folder Include="Images\" />
   </ItemGroup>
@@ -229,6 +228,7 @@
     <Content Include="Views\Posts\PostsTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Helper.cshtml" />
     <None Include="Properties\PublishProfiles\RaysProfile.pubxml" />
   </ItemGroup>
   <PropertyGroup>

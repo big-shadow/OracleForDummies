@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OFDTests", "OFDTests\OFDTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PreDeploy", "PreDeploy", "{B6E10926-9C92-4148-8CE2-904B71E1D9FB}"
+	ProjectSection(SolutionItems) = preProject
+		SQL.sql = SQL.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

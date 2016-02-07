@@ -4,23 +4,42 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Website.Models;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Website.Controllers
 {
     public class HomeController : Controller
     {
+        private static List<string> IgnoredSearchTerms;
+
+        public HomeController()
+        {
+            IgnoredSearchTerms = new List<string>();
+            IgnoredSearchTerms.Add("the");
+            IgnoredSearchTerms.Add("and");
+            IgnoredSearchTerms.Add("if");
+            IgnoredSearchTerms.Add("it");
+        }
+
         public ActionResult Index()
         {
             Random rnd = new Random();
 
+            Category category = new Category();
+            //category.Drop();
+
+            category.Title = "Random (" + rnd.Next(1, 100) + ")";
+            category.Save();
+
             Post post = new Post();
             //post.Drop();
 
-            post.Title = "Epic Meal Time " + rnd.Next(1, 100);
+            post.Title = "Cucumber Socks (" + rnd.Next(1, 100) + ")";
             post.AuthorID = 1;
-            post.CategoryID = 1;
+            post.CategoryID = category.ID;
             post.DatePosted = DateTime.Now;
-            post.PostText = "A really cool post! " + rnd.Next(1, 100);
+            post.PostText = "I had a really fun time. (" + rnd.Next(1, 100) + "). I wonder when this will get trimmed?";
             post.Save();
 
             return View();
@@ -31,7 +50,20 @@ namespace Website.Controllers
         [ActionName("PostSearch")]
         public ActionResult GetPosts(string keyword)
         {
-            ViewBag.Posts = Post.GetWhere<Post>("PostText LIKE '%" + keyword + "%' AND RowNum < 9");
+            // This is for SQL injection attempts. 
+            keyword = Regex.Replace(keyword, @"([^\w|\s])", string.Empty);
+
+            StringBuilder sql = new StringBuilder("RowNum < 9 ");
+
+            foreach (string term in keyword.Split())
+            {
+                if (term.Length > 0 && !IgnoredSearchTerms.Contains(term.ToLowerInvariant()))
+                {
+                    sql.Append("AND PostText LIKE '%" + term + "%'");
+                }
+            }
+
+            ViewBag.Posts = Post.GetWhere<Post>(sql.ToString());
 
             return PartialView("~/Views/Posts/PostsTable.cshtml");
         }

@@ -1,4 +1,24 @@
-﻿@if (ViewBag.Posts.Count > 0)
+﻿@using Website.Models;
+
+@functions {
+    
+    public static string GetCategoryName(int id)
+    {
+        return Category.ScalarWhereID<Category>(id).Title;
+    }
+
+    public static string TrimPostText(string post)
+    {
+        if (post.Length > 35)
+        {
+            return post.Substring(0, 32) + " ...";
+        }
+
+        return post;
+    }
+}
+
+@if (ViewBag.Posts.Count > 0)
 {
     <table class="u-full-width">
         <thead>
@@ -14,8 +34,8 @@
             {
                 <tr>
                     <td>@post.Title</td>
-                    <td>@post.PostText</td>
-                    <td>@post.CategoryID</td>
+                    <td>@TrimPostText(post.PostText)</td>
+                    <td>@GetCategoryName(post.CategoryID)</td>
                     <td>@post.DatePosted.ToString("MMMM d, yyyy - h:mm")</td>
                 </tr>
             }
@@ -24,5 +44,5 @@
 }
 else
 {
-    <h5>Sorry. No posts contain that keyword.</h5>
+    <h6>Sorry. No posts contain that keyword.</h6>
 }

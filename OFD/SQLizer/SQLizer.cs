@@ -17,7 +17,7 @@ namespace OFD.SQLize
             {
                 if (column.Key.Equals("ID"))
                 {
-                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL");
+                    statement.AppendLine(delimiter + column.Key + ' ' + column.Value + " GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY");
                 }
                 else
                 {
@@ -27,8 +27,8 @@ namespace OFD.SQLize
                 delimiter = ", ";
             }
 
-            statement.AppendLine(", time_inserted TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL");
-            statement.AppendLine(", time_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL");
+            statement.AppendLine(", time_inserted TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3) NOT NULL");
+            statement.AppendLine(", time_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3) NOT NULL");
             statement.AppendLine(")");
 
             return statement.ToString();
