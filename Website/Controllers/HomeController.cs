@@ -31,7 +31,7 @@ namespace Website.Controllers
         [ActionName("PostSearch")]
         public ActionResult GetPosts(string keyword)
         {
-            ViewBag.Posts = Post.GetWhere<Post>("PostText LIKE '%" + keyword + "%'");
+            ViewBag.Posts = Post.GetWhere<Post>("PostText LIKE '%" + keyword + "%' AND RowNum < 9");
 
             return PartialView("~/Views/Posts/PostsTable.cshtml");
         }

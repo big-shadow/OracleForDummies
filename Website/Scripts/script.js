@@ -1,4 +1,8 @@
-﻿$("#search").keyup(function () {
+﻿$("#posts").ready(function () {
+    GetRecentPosts();
+});
+
+$("#search").keyup(function () {
     var key = $("#search").val();
 
     if (key.length > 0) {
@@ -7,13 +11,21 @@
          .done(function (table) {
              $("#posts").empty();
              $("#posts").append(table);
+             $("#title").empty();
+             $("#title").append("Search Results");
          });
     } else {
-        var url = "/Home/RecentPosts";
-        $.post(url, { count: 3 })
-         .done(function (table) {
-             $("#posts").empty();
-             $("#posts").append(table);
-         });
+        GetRecentPosts();
     }
 });
+
+function GetRecentPosts() {
+    var url = "/Home/RecentPosts";
+    $.post(url, { count: 8 })
+     .done(function (table) {
+         $("#posts").empty();
+         $("#posts").append(table);
+         $("#title").empty();
+         $("#title").append("Recent Posts");
+     });
+}
