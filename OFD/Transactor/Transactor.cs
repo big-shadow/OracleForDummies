@@ -1,5 +1,5 @@
 ﻿using System;
-using Oracle.DataAccess.Client;
+using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using OFD.Properties;
 using OFD.Caching;
@@ -23,7 +23,7 @@ namespace OFD.Transact
                       (SERVER = DEDICATED)
                       (SERVICE_NAME = orcl)
                     )
-                  ); User Id = system; Password = 2016;";
+                  ); User Id = system; Password = password;";
 
             try
             {

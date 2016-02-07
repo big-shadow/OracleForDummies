@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Oracle.DataAccess.Client;
+using Oracle.ManagedDataAccess.Client;
 
 namespace OFD.Transact
 {
@@ -21,15 +21,15 @@ namespace OFD.Transact
                 return map;
             }
         }
-        public string Name { get; set; }
-        public OracleDbType Type { get; set; }
-        public object Value { get; set; }
+        public string Name;
+        public OracleDbType Type;
+        public object Value;
 
         public Parameter(string name, Type type, object value)
         {
-            Name = name;
-            Type = DbTypeMap[type];
-            Value = value;
+            this.Name = name;
+            this.Type = DbTypeMap[type];
+            this.Value = value;
         }
     }
 }

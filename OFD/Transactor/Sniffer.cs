@@ -1,5 +1,5 @@
 ﻿using System;
-using Oracle.DataAccess.Client;
+using Oracle.ManagedDataAccess.Client;
 using OFD.Properties;
 
 namespace OFD.Transact

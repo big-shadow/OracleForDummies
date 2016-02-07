@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/css")
+</head>
+<body class="container">
+    <header>
+        <h3 class="u-full-width" style="padding-top:15px">@ViewBag.Title</h3>
+    </header>
+    <div id="body">
+        @RenderSection("search", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+    <footer>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p>&copy; @DateTime.Now.Year - Ray's Blog</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    @Scripts.Render("~/bundles/js")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

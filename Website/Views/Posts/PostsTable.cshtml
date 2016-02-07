@@ -1,0 +1,28 @@
+﻿@if (ViewBag.Posts.Count > 0)
+{
+    <table class="u-full-width">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Category</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in ViewBag.Posts)
+            {
+                <tr>
+                    <td>@post.Title</td>
+                    <td>@post.PostText</td>
+                    <td>@post.CategoryID</td>
+                    <td>@post.DatePosted.ToString("MMMM d, yyyy - h:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h5>Sorry. No posts contain that keyword.</h5>
+}

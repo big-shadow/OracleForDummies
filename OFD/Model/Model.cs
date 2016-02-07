@@ -44,6 +44,11 @@ namespace OFD
             Transactor.SetScalarWhere(this, condition);
         }
 
+        public virtual void Drop()
+        {
+            Transactor.Drop(GetType());
+        }
+
         // Static members.
         public static T ScalarWhereID<T>(int id) where T : Model, new()
         {

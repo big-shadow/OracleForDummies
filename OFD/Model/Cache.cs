@@ -60,10 +60,10 @@ namespace OFD.Caching
     /// </summary>
     public class ModelCache
     {
-        public String TableName { get; }
-        public Dictionary<string, string> IdentityCache { get; }
-        public Dictionary<string, string> ColumnDictionary { get; }
-        public List<System.Reflection.PropertyInfo> WritableProperties { get; }
+        public String TableName { get; set; }
+        public Dictionary<string, string> IdentityCache { get; set; }
+        public Dictionary<string, string> ColumnDictionary { get; set; }
+        public List<System.Reflection.PropertyInfo> WritableProperties { get; set; }
 
         public ModelCache(Type type)
         {

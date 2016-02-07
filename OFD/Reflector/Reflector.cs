@@ -23,7 +23,7 @@ namespace OFD.Reflect
                 map.Add(typeof(short), "NUMBER(5)");
                 map.Add(typeof(int), "NUMBER(10)");
                 map.Add(typeof(long), "NUMBER(19)");
-                map.Add(typeof(DateTime), "DATE");
+                map.Add(typeof(DateTime), "VARCHAR2(64)");
 
                 return map;
             }
@@ -73,6 +73,11 @@ namespace OFD.Reflect
                     if (p.GetType().Equals(typeof(String)))
                     {
                         dic.Add(index.Key, "'" + p.ToString() + "'");
+                    }
+                    else if (p.GetType().Equals(typeof(DateTime)))
+                    {
+                        DateTime date = (DateTime)p;
+                        dic.Add(index.Key, "'" + date.ToString("yyy-MM-dd H:mm:ss") + "'");
                     }
                     else
                     {
@@ -187,6 +192,10 @@ namespace OFD.Reflect
                 if (value.GetType().Equals(typeof(long)) && (long)value < int.MaxValue)
                 {
                     property.SetValue(instance, unchecked((int)(long)value), null);
+                }
+                else if (property.PropertyType.Equals(typeof(DateTime)))
+                {
+                    property.SetValue(instance, Convert.ToDateTime(value), null);
                 }
                 else
                 {

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OFD", "OFD\OFD.csproj", "{B41E3038-551C-4996-8CE7-C2D499491B97}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OFDTests", "OFDTests\OFDTests.csproj", "{3D9AA3DD-A6F4-44B3-94B3-A084D49CC4BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +31,12 @@ Global
 		{3D9AA3DD-A6F4-44B3-94B3-A084D49CC4BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D9AA3DD-A6F4-44B3-94B3-A084D49CC4BA}.Release|x86.ActiveCfg = Release|Any CPU
 		{3D9AA3DD-A6F4-44B3-94B3-A084D49CC4BA}.Release|x86.Build.0 = Release|Any CPU
+		{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEF2BF87-228D-4DA3-9F46-5B5E1D3EB3BB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
