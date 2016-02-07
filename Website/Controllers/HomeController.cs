@@ -76,5 +76,14 @@ namespace Website.Controllers
 
             return PartialView("~/Views/Posts/PostsTable.cshtml");
         }
+
+        [HttpPost]
+        [ActionName("RecentPostsInCategory")]
+        public ActionResult GetPostsInCategory(int id)
+        {
+            ViewBag.Posts = Post.GetWhere<Post>("CategoryID = " + id + " AND RowNum < 9 ORDER BY DatePosted DESC");
+
+            return PartialView("~/Views/Posts/PostsTable.cshtml");
+        }
     }
 }

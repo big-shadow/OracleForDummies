@@ -35,12 +35,27 @@
                 <tr>
                     <td>@post.Title</td>
                     <td>@TrimPostText(post.PostText)</td>
-                    <td>@GetCategoryName(post.CategoryID)</td>
+                    <td><a class="category" data-id="@post.CategoryID" href="/">@GetCategoryName(post.CategoryID)</a></td>
                     <td>@post.DatePosted.ToString("MMMM d, yyyy - h:mm")</td>
                 </tr>
             }
         </tbody>
     </table>
+    <script>
+        $(".category").click(function (e) {
+            e.preventDefault();
+            var url = "/Home/RecentPostsInCategory";
+            var category = $(this).text();
+
+            $.post(url, { id: $(this).data('id') })
+             .done(function (table) {
+                 $("#title").empty();
+                 $("#title").append(category);
+                 $("#posts").empty();
+                 $("#posts").append(table);
+             });
+        });
+    </script>
 }
 else
 {
