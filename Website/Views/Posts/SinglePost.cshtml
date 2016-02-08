@@ -1,0 +1,37 @@
+﻿@using Website.Models;
+
+<h4>@ViewBag.Post.Title</h4>
+<div class="row">
+    <div class="three columns">
+        <h6>Posted by <b>@ViewHelper.GetUsername(ViewBag.Post.AuthorID)</b></h6>
+    </div>
+    <div class="three columns">
+        <h6>@ViewHelper.FormatDate(ViewBag.Post.DatePosted)</h6>
+    </div>
+    <div class="three columns">
+        <h6><a class="category" data-id="@ViewBag.Post.CategoryID" href="/">@ViewHelper.GetCategoryName(ViewBag.Post.CategoryID)</a></h6>
+    </div>
+</div>
+
+
+<div class="row u-max-full-width">
+    @ViewBag.Post.PostText
+</div>
+
+<a class="button button-primary" href="#" style="margin-top: 25px">Back</a>
+
+<script>
+    $(".category").click(function (e) {
+        e.preventDefault();
+        var url = "/Home/RecentPostsInCategory";
+        var category = $(this).text();
+
+        $.post(url, { id: $(this).data('id') })
+         .done(function (table) {
+             $("#title").empty();
+             $("#title").append(category);
+             $("#content").empty();
+             $("#content").append(table);
+         });
+    });
+</script>

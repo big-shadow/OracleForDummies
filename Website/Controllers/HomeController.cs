@@ -27,16 +27,23 @@ namespace Website.Controllers
             Random rnd = new Random();
 
             Category category = new Category();
-            //category.Drop();
+            category.Drop();
 
             category.Title = "Random (" + rnd.Next(1, 100) + ")";
             category.Save();
 
+            Author author = new Author();
+            //user.Drop();
+
+            author.Username = "Ray Winkelman";
+            author.Password = "password";
+            author.Save();
+
             Post post = new Post();
-            //post.Drop();
+            post.Drop();
 
             post.Title = "Cucumber Socks (" + rnd.Next(1, 100) + ")";
-            post.AuthorID = 1;
+            post.AuthorID = author.ID;
             post.CategoryID = category.ID;
             post.DatePosted = DateTime.Now;
             post.PostText = "I had a really fun time. (" + rnd.Next(1, 100) + "). I wonder when this will get trimmed?";
@@ -84,6 +91,15 @@ namespace Website.Controllers
             ViewBag.Posts = Post.GetWhere<Post>("CategoryID = " + id + " AND RowNum < 9 ORDER BY DatePosted DESC");
 
             return PartialView("~/Views/Posts/PostsTable.cshtml");
+        }
+
+        [HttpPost]
+        [ActionName("SinglePost")]
+        public ActionResult GetSinglePost(int id)
+        {
+            ViewBag.Post = Post.ScalarWhereID<Post>(id);
+
+            return PartialView("~/Views/Posts/SinglePost.cshtml");
         }
     }
 }

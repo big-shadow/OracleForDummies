@@ -189,6 +189,8 @@
     </Compile>
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\ViewHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +232,7 @@
   <ItemGroup>
     <Content Include="App_Data\Helper.cshtml" />
     <None Include="Properties\PublishProfiles\RaysProfile.pubxml" />
+    <Content Include="Views\Posts\SinglePost.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

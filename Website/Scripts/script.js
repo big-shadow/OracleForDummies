@@ -1,4 +1,4 @@
-﻿$("#posts").ready(function () {
+﻿$("#content").ready(function () {
     GetRecentPosts();
 });
 
@@ -9,8 +9,8 @@ $("#search").keyup(function () {
         var url = "/Home/PostSearch";
         $.post(url, { keyword: key })
          .done(function (table) {
-             $("#posts").empty();
-             $("#posts").append(table);
+             $("#content").empty();
+             $("#content").append(table);
              $("#title").empty();
              $("#title").append("Search Results");
          });
@@ -23,8 +23,8 @@ function GetRecentPosts() {
     var url = "/Home/RecentPosts";
     $.post(url, { count: 8 })
      .done(function (table) {
-         $("#posts").empty();
-         $("#posts").append(table);
+         $("#content").empty();
+         $("#content").append(table);
          $("#title").empty();
          $("#title").append("Recent Posts");
      });
