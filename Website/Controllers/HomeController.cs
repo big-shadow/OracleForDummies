@@ -27,7 +27,7 @@ namespace Website.Controllers
             Random rnd = new Random();
 
             Category category = new Category();
-            category.Drop();
+            //category.Drop();
 
             category.Title = "Random (" + rnd.Next(1, 100) + ")";
             category.Save();
@@ -40,7 +40,7 @@ namespace Website.Controllers
             author.Save();
 
             Post post = new Post();
-            post.Drop();
+            //post.Drop();
 
             post.Title = "Cucumber Socks (" + rnd.Next(1, 100) + ")";
             post.AuthorID = author.ID;

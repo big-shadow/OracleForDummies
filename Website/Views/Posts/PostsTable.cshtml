@@ -15,14 +15,15 @@
             @foreach (var post in ViewBag.Posts)
             {
                 <tr>
-                    <td><a class="post" data-id="@post.ID" href="/">@ViewHelper.LimitLength(post.Title, 30)</a></td>
+                    <td><a class="post" data-id="@post.ID" href="#">@ViewHelper.LimitLength(post.Title, 30)</a></td>
                     <td>@ViewHelper.LimitLength(post.PostText, 30)</td>
-                    <td><a class="category" data-id="@post.CategoryID" href="/">@ViewHelper.GetCategoryName(post.CategoryID)</a></td>
+                    <td><a class="category" data-id="@post.CategoryID" href="#">@ViewHelper.GetCategoryName(post.CategoryID)</a></td>
                     <td>@ViewHelper.FormatDate(post.DatePosted)</td>
                 </tr>
             }
         </tbody>
     </table>
+    
     <script>
         $(".category").click(function (e) {
             e.preventDefault();

@@ -1,10 +1,26 @@
-﻿$("#content").ready(function () {
+﻿var key = "";
+
+$("#content").ready(function () {
     GetRecentPosts();
 });
 
 $("#search").keyup(function () {
-    var key = $("#search").val();
+    key = $("#search").val();
+    GetPostsByKey();
+});
 
+function GetRecentPosts() {
+    var url = "/Home/RecentPosts";
+    $.post(url, { count: 8 })
+     .done(function (table) {
+         $("#content").empty();
+         $("#content").append(table);
+         $("#title").empty();
+         $("#title").append("Recent Posts");
+     });
+}
+
+function GetPostsByKey() {
     if (key.length > 0) {
         var url = "/Home/PostSearch";
         $.post(url, { keyword: key })
@@ -17,15 +33,4 @@ $("#search").keyup(function () {
     } else {
         GetRecentPosts();
     }
-});
-
-function GetRecentPosts() {
-    var url = "/Home/RecentPosts";
-    $.post(url, { count: 8 })
-     .done(function (table) {
-         $("#content").empty();
-         $("#content").append(table);
-         $("#title").empty();
-         $("#title").append("Recent Posts");
-     });
 }

@@ -18,7 +18,7 @@
     @ViewBag.Post.PostText
 </div>
 
-<a class="button button-primary" href="#" style="margin-top: 25px">Back</a>
+<a id="back-button" class="button button-primary" href="#" style="margin-top: 25px">Back</a>
 
 <script>
     $(".category").click(function (e) {
@@ -33,5 +33,10 @@
              $("#content").empty();
              $("#content").append(table);
          });
+    });
+
+    $("#back-button").click(function (e) {
+        e.preventDefault();
+        GetPostsByKey();
     });
 </script>
